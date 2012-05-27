@@ -10,7 +10,7 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     config.add_static_view('static', 'static', cache_max_age=3600)
 
-    # views.website.py
+    # views.pages.py
     config.add_route('home', '/')
     config.add_route('signup', '/signup')
     config.add_route('dashboard', '/dashboard')
