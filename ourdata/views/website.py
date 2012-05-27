@@ -1,5 +1,5 @@
 from ourdata.exceptions import UserExists
-from ourdata.mongoauth.models import User
+from ourdata.models import User
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid, remember

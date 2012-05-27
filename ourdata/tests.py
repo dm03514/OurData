@@ -1,4 +1,4 @@
-from ourdata.mongoauth.models import User
+from ourdata.models import User
 import os
 import unittest
 from webtest import TestApp
