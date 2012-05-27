@@ -1,6 +1,9 @@
-from pyramid.view import view_config
 from ourdata.exceptions import UserExists
 from ourdata.mongoauth.models import User
+
+from pyramid.httpexceptions import HTTPFound
+from pyramid.security import authenticated_userid, remember
+from pyramid.view import view_config
 
 @view_config(route_name='home', renderer='ourdata:templates/home.pt')
 def home(request):
@@ -25,12 +28,18 @@ def signup_post(request):
         if not request.POST.get(param):
             raise Exception('Param: %s missing from request' % 
                             (param))
-    #import ipdb; ipdb.set_trace()
     # check if user exists based on email
     new_user = User.create_user(request.POST['email'],
         request.POST['first_name'], request.POST['last_name'],
         request.POST['password'])
-    # log user in and redirect
-    
-    return {}
 
+    # log user in and redirect
+    headers = remember(request, str(new_user.id))
+    return HTTPFound(location='dashboard', headers=headers)
+
+@view_config(route_name='dashboard', request_method='GET', 
+            renderer='string')
+def dashboard(request):
+    """Render the dashboard template"""
+    user_id = authenticated_userid(request)
+    return 'At dashboard!' 

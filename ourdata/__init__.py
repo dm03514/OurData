@@ -1,4 +1,6 @@
 from mongoengine import connect
+from pyramid.authentication import AuthTktAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 
 
@@ -11,6 +13,12 @@ def main(global_config, **settings):
     # views.website.py
     config.add_route('home', '/')
     config.add_route('signup', '/signup')
+    config.add_route('dashboard', '/dashboard')
+
+    authn_policy = AuthTktAuthenticationPolicy('sosecret')
+    authz_policy = ACLAuthorizationPolicy()
+    config.set_authentication_policy(authn_policy)
+    config.set_authorization_policy(authz_policy)
 
     connect(settings['mongo_db_name'])
     config.scan()

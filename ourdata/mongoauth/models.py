@@ -7,13 +7,14 @@ from ourdata.utils import encrypt_password, validate_email
 class User(Document):
     email = StringField(required=True)
     first_name = StringField(required=True, max_length=50)
-    is_staff = BooleanField()
-    is_superuser = BooleanField()
+    #is_staff = BooleanField()
+    #is_superuser = BooleanField()
     is_active = BooleanField()
     last_login = DateTimeField()
     last_name = StringField(required=True, max_length=50)
     password = StringField(required=True)
     datetime_joined = DateTimeField()
+    groups = ListField(StringField())
 
     @classmethod
     def create_user(cls, email, first_name, last_name, password):
@@ -36,6 +37,9 @@ class User(Document):
         # hash bpassword
         encrypted_password = encrypt_password(password)
         now_datetime = datetime.now()
+
+        #import ipdb; ipdb.set_trace()
+
         new_user = cls(
             email = email, 
             first_name = first_name, 
@@ -43,8 +47,6 @@ class User(Document):
             password = encrypted_password,
             datetime_joined = now_datetime, 
             last_login = now_datetime,
-            is_superuser = False,
-            is_staff = False,
             is_active = True
         )
         new_user.save()

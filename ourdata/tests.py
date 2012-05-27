@@ -34,8 +34,12 @@ class ViewFunctionalTests(unittest.TestCase):
             'email': 'dm03514@gmail.com',
             'password': 'ourdata',
         }
-        result = self.testapp.post('/signup', params=post_params, 
+        old_count = User.objects.all().count()
+        response = self.testapp.post('/signup', params=post_params, 
                                    status=302)
+        # make sure a user has been created.
+        new_count = User.objects.all().count()
+        self.assertEqual(new_count, old_count + 1)
         #import ipdb; ipdb.set_trace()
 
 
