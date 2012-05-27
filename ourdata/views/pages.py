@@ -38,8 +38,10 @@ def signup_post(request):
     return HTTPFound(location='dashboard', headers=headers)
 
 @view_config(route_name='dashboard', request_method='GET', 
-            renderer='string')
+            renderer='ourdata:templates/dashboard.pt')
 def dashboard(request):
     """Render the dashboard template"""
     user_id = authenticated_userid(request)
-    return 'At dashboard!' 
+    if user_id is None:
+        raise Exception('Unauthenticated User!')
+    return {}

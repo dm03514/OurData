@@ -13,6 +13,10 @@ class User(Document):
     password = StringField(required=True)
     datetime_joined = DateTimeField()
     groups = ListField(StringField())
+    permissiongs = ListField(StringField())
+
+    def __unicode__(self):
+        return '%s %s' % (self.first_name, self.last_name)
 
     @classmethod
     def authenticate(cls, email, password):
@@ -31,9 +35,9 @@ class User(Document):
         except cls.DoesNotExist:
             return None
 
-
     @classmethod
-    def create_user(cls, email, first_name, last_name, password):
+    def create_user(cls, email, first_name, last_name, password,
+                        groups=[]):
         """
         Responsible for validating new user input.  Hashes password
         and raises UserExists error if is duplicate. Creates and saves
@@ -65,5 +69,7 @@ class User(Document):
             last_login = now_datetime,
             is_active = True
         )
+        if groups:
+            new_user.groups = groups
         new_user.save()
         return new_user
