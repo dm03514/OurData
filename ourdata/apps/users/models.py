@@ -1,7 +1,7 @@
 from datetime import datetime
 from mongoengine import *
-from ourdata.exceptions import UserExists
-from ourdata.utils import encrypt_password, validate_email
+from ourdata.apps.common.exceptions import UserExists
+from ourdata.apps.common.utils import encrypt_password, validate_email
 
 
 class User(Document):

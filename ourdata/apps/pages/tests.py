@@ -1,4 +1,4 @@
-from ourdata.models import User
+from ourdata.apps.users.models import User
 import os
 import unittest
 from webtest import TestApp

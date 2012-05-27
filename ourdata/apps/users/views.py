@@ -1,4 +1,4 @@
-from ourdata.models import User
+from ourdata.apps.users.models import User
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid, remember, forget

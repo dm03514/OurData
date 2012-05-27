@@ -1,5 +1,5 @@
 import hashlib
-from ourdata.exceptions import ValidationError
+from ourdata.apps.common.exceptions import ValidationError
 import re
 
 def validate_email(email_address):

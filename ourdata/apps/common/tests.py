@@ -1,3 +1,5 @@
+from ourdata.apps.common.utils import validate_email
+from ourdata.apps.common.exceptions import ValidationError
 import unittest
 
 class UtilsTests(unittest.TestCase): 
@@ -8,8 +10,6 @@ class UtilsTests(unittest.TestCase):
         Verify that an incorrect email can be detected,
         and a valid one can be detected.
         """
-        from ourdata.utils import validate_email
-        from ourdata.exceptions import ValidationError
 
         #import ipdb; ipdb.set_trace()
         valid_email = 'test@test.com'
