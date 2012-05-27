@@ -7,14 +7,30 @@ from ourdata.utils import encrypt_password, validate_email
 class User(Document):
     email = StringField(required=True)
     first_name = StringField(required=True, max_length=50)
-    #is_staff = BooleanField()
-    #is_superuser = BooleanField()
     is_active = BooleanField()
     last_login = DateTimeField()
     last_name = StringField(required=True, max_length=50)
     password = StringField(required=True)
     datetime_joined = DateTimeField()
     groups = ListField(StringField())
+
+    @classmethod
+    def authenticate(cls, email, password):
+        """
+        Check to see if a user's credentials are correct.
+
+        @param email string
+        @param password string
+        @return User object or None
+        """
+        encrypted_password = encrypt_password(password)
+        try:
+            user = cls.objects.get(email=email, 
+                            password=encrypted_password)
+            return user
+        except cls.DoesNotExist:
+            return None
+
 
     @classmethod
     def create_user(cls, email, first_name, last_name, password):

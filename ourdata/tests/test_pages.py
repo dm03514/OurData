@@ -4,9 +4,8 @@ import unittest
 from webtest import TestApp
 
 from pyramid import testing
-from mongoengine import *
 
-class ViewFunctionalTests(unittest.TestCase):
+class PagesTests(unittest.TestCase):
     """Functional tests for all views.  If enough views split
     this up."""
 
@@ -27,17 +26,3 @@ class ViewFunctionalTests(unittest.TestCase):
     def test_signup_get(self):
         result = self.testapp.get('/signup', status=200)
 
-    def test_signup_post(self):
-        post_params = {
-            'first_name': 'Daniel',
-            'last_name': 'Mican',
-            'email': 'dm03514@gmail.com',
-            'password': 'ourdata',
-        }
-        old_count = User.objects.all().count()
-        response = self.testapp.post('/signup', params=post_params, 
-                                   status=302)
-        # make sure a user has been created.
-        new_count = User.objects.all().count()
-        self.assertEqual(new_count, old_count + 1)
-        #import ipdb; ipdb.set_trace()

@@ -10,10 +10,14 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     config.add_static_view('static', 'static', cache_max_age=3600)
 
-    # views.pages.py
+    # views.pages
     config.add_route('home', '/')
     config.add_route('signup', '/signup')
     config.add_route('dashboard', '/dashboard')
+
+    # views.users
+    config.add_route('login', '/login')
+    config.add_route('logout', '/logout')
 
     authn_policy = AuthTktAuthenticationPolicy('sosecret')
     authz_policy = ACLAuthorizationPolicy()
