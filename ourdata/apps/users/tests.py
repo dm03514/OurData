@@ -1,29 +1,11 @@
+from ourdata.apps.common.tests import TestTemplate
 from ourdata.apps.users.models import User
 from pyramid import testing
 import unittest
 from webtest import TestApp
 
 
-class UsersTests(unittest.TestCase):
-    """
-    Test for user related actions.
-    """
-    def setUp(self):
-        from ourdata import main
-        app = main({}, **{'mongo_db_name': 'ourdata_test'})
-        self.testapp = TestApp(app)
-
-        self.test_email = 'test@test.com'
-        self.test_password = 'test'
-        self.test_user = User.create_user(email=self.test_email,
-                first_name='test', last_name='test', 
-                password=self.test_password)
-
-    def tearDown(self):
-        testing.tearDown()
-        # make sure to clear test_db every time
-        # right now just delete the models that are used,  hacky
-        User.objects.delete()
+class UsersTests(TestTemplate):
 
     def test_new_user_signup_post(self):
         post_params = {

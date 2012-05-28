@@ -4,6 +4,6 @@ from pyramid.view import view_config
         permission='staff', 
         request_method='GET', 
         renderer='ourdata:templates/create_dataset.pt')
-def create_dataset(request):
+def create_dataset_get(request):
     """Render the create_dataset template"""
     return {}

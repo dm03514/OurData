@@ -1,6 +1,9 @@
 from ourdata.apps.common.utils import validate_email
 from ourdata.apps.common.exceptions import ValidationError
+from ourdata.apps.users.models import User
 import unittest
+from pyramid import testing
+from webtest import TestApp
 
 class UtilsTests(unittest.TestCase): 
     """ Tests utils.py functions."""
@@ -21,3 +24,24 @@ class UtilsTests(unittest.TestCase):
             self.fail('invalid email not caught')
         except ValidationError:
             pass
+
+
+class TestTemplate(unittest.TestCase):
+
+    def setUp(self):
+        from ourdata import main
+        app = main({}, **{'mongo_db_name': 'ourdata_test'})
+        self.testapp = TestApp(app)
+
+        self.test_email = 'test@test.com'
+        self.test_password = 'test'
+        self.test_user = User.create_user(email=self.test_email,
+                first_name='test', last_name='test', 
+                password=self.test_password)
+
+
+    def tearDown(self):
+        testing.tearDown()
+        # make sure to clear test_db every time
+        # right now just delete the models that are used,  hacky
+        User.objects.delete()
