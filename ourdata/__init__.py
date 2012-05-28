@@ -1,3 +1,4 @@
+from ourdata.apps.users.models import User
 from mongoengine import connect
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -26,6 +27,8 @@ def main(global_config, **settings):
 
     # views.datasets
     config.add_route('dataset_create', '/dataset/create')
+    config.add_route('dataset_get', '/dataset/get/{title}')
+    config.add_route('column_create', '/dataset/{title}/column/create')
 
     authn_policy = AuthTktAuthenticationPolicy('sosecret',
                     callback=group_finder)

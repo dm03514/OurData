@@ -1,5 +1,6 @@
 from ourdata.apps.common.utils import validate_email
 from ourdata.apps.common.exceptions import ValidationError
+from ourdata.apps.datasets.models import DatasetSchema
 from ourdata.apps.users.models import User
 import unittest
 from pyramid import testing
@@ -45,3 +46,14 @@ class TestTemplate(unittest.TestCase):
         # make sure to clear test_db every time
         # right now just delete the models that are used,  hacky
         User.objects.delete()
+        DatasetSchema.objects.delete()
+
+
+    def login(self, email, password):
+        """
+        Logs a user in.
+        """
+        post_params = {'email': email, 'password': password}
+        response = self.testapp.post('/login', params=post_params, 
+                                   status=302)
+
