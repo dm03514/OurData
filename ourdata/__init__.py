@@ -3,7 +3,7 @@ from mongoengine import connect
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
-from pyramid.security import ALL_PERMISSIONS, Allow, Authenticated, Deny
+from pyramid.security import ALL_PERMISSIONS, Allow, Authenticated, Deny, unauthenticated_userid
 
 
 def main(global_config, **settings):
@@ -37,6 +37,9 @@ def main(global_config, **settings):
     config.set_authorization_policy(authz_policy)
 
     connect(settings['mongo_db_name'])
+
+    config.set_request_property(get_user, 'user', reify=True)
+
     config.scan()
     return config.make_wsgi_app()
 
@@ -49,6 +52,15 @@ def group_finder(user_id, request):
         return [group for group in user.groups]
     except User.DoesNotExist:
         pass
+
+def get_user(request):
+    """
+    See if the current user is logged in and fetch the corresponding
+    user object.
+    """
+    user_id = unauthenticated_userid(request)
+    if user_id is not None:
+        return User.objects.get(id=user_id)
 
 
 class Root(object):

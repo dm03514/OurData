@@ -25,7 +25,7 @@ class UsersTests(TestTemplate):
         """
         authenticated_user = User.authenticate(self.test_user.email, 
                                             self.test_password) 
-        self.assertIsNotNone(authenticated_user)
+        self.assertNotEqual(None, authenticated_user)
         self.assertEqual(self.test_user.id, authenticated_user.id)
 
     def test_login(self):

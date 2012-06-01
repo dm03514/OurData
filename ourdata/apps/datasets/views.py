@@ -18,14 +18,6 @@ def column_create(request):
     """
     Preforms Create a new column.
     """
-    # check for user this should probably go in main somewhere 
-    # digging deeper hole
-    user_id = authenticated_userid(request)
-    try:
-        user = User.objects.get(id=user_id)
-    except User.DoesNotExist:
-        return {'success': False, 'message': 'User does not exist'}
-
     try:
         dataset = DatasetSchema.objects.get(
             title=request.matchdict['title']
@@ -60,7 +52,7 @@ def column_create(request):
     new_field = Field(
         name = name,
         data_type = data_type,
-        created_by_user_id = user.id,
+        created_by_user_id = request.user.id,
         created_datetime = datetime.now(),
     )
 
@@ -93,7 +85,7 @@ def create_dataset(request):
     Create a new dataset schema.  
     Requires a unique collection name.
     """
-
+    #import ipdb; ipdb.set_trace()
     title = request.POST.get('title')
     if not title:
         raise Exception('title missing from request')
@@ -106,17 +98,10 @@ def create_dataset(request):
     except DatasetSchema.DoesNotExist:
         pass
 
-    # check for user this should probably go in main somewhere
-    user_id = authenticated_userid(request)
-    try:
-        user = User.objects.get(id=user_id)
-    except User.DoesNotExist:
-        raise Exception('User not found')
-
     # create a datassetschema with this name and let the user add some
     # fields!
     new_dataset = DatasetSchema(
-        created_by_user_id = user.id,
+        created_by_user_id = request.user.id,
         created_datetime = datetime.now(),
         title = title,
     )
