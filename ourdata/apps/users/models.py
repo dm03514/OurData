@@ -13,7 +13,7 @@ class User(Document):
     password = StringField(required=True)
     datetime_joined = DateTimeField()
     groups = ListField(StringField())
-    permissiongs = ListField(StringField())
+    permissions = ListField(StringField())
 
     def __unicode__(self):
         return '%s %s' % (self.first_name, self.last_name)
