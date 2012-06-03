@@ -1,3 +1,5 @@
+from datetime import datetime
+from ourdata.apps.common.exceptions import DataConversionError, FieldNotFoundError
 from mongoengine import *
 
 
@@ -6,8 +8,8 @@ class Field(EmbeddedDocument):
     Contains meta data on a field name and field datatype as
     defined by a user.
     """
-    name = StringField()
-    data_type = StringField()
+    name = StringField(required=True)
+    data_type = StringField(required=True)
     datetime_format = StringField()
     created_by_user_id = ObjectIdField()
     created_datetime = DateTimeField()
@@ -29,5 +31,51 @@ class DatasetSchema(Document):
     def __unicode__(self):
         return self.title
 
+    def convert_field_value(self, field_name, field_value_str):
+        """
+        Convert a given field_name's value to it's internal datatype.
+        Raises a DataConversion error if there is an issue.
+        Might have to create a dictionary of fields to datatypes
+        Should this even be here???
+        """
+        # look for a field with this field_name
+        field_declaration = None
+        for field in self.fields:
+            if field.name == field_name:
+                field_declaration = field
+                break
+        if field_declaration is None:
+            raise FieldNotFoundError 
 
-VALID_DATA_TYPES = ['int', 'decimal', 'str', 'datetime']
+        # if data type is string we can just return value now
+        if field_declaration.data_type == 'str':
+            return field_value_str
+
+        # try converting the string value to a python datatype
+        conversion_f = VALID_DATA_TYPES[field_declaration.data_type]['function']
+        try:
+            # check if this is a datateme becasues then we need
+            # to pass the datetime formatting str
+            if field_declaration.data_type == 'datetime':
+                return conversion_f(field_value_str, 
+                                    field_declaration.datetime_format)
+
+            # else just return the normal function
+            return conversion_f(field_value_str)
+        except ValueError:
+            raise DataConversionError
+
+
+
+VALID_DATA_TYPES = {
+    'int': {
+        'function': int,
+    },
+    'decimal': {
+        'function': float,
+    }, 
+    'str': {}, 
+    'datetime': { 
+        'function': datetime.strptime,
+    }
+}
