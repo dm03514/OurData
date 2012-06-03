@@ -5,13 +5,13 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid, remember
 from pyramid.view import view_config
 
-@view_config(route_name='home', renderer='ourdata:templates/home.pt')
+@view_config(route_name='home', renderer='ourdata:templates/home.mak')
 def home(request):
     """Render the home template"""
     return {'project':'OurData'}
 
 @view_config(route_name='signup', request_method='GET',
-             renderer='ourdata:templates/signup.pt')
+             renderer='ourdata:templates/signup.mak')
 def signup_get(request):
     """Render signup template"""
     return {}
@@ -38,10 +38,14 @@ def signup_post(request):
     return HTTPFound(location='dashboard', headers=headers)
 
 @view_config(route_name='dashboard', request_method='GET', 
-            renderer='ourdata:templates/dashboard.pt')
+            renderer='ourdata:templates/dashboard.mak')
 def dashboard(request):
     """Render the dashboard template"""
     user_id = authenticated_userid(request)
     if user_id is None:
         raise Exception('Unauthenticated User!')
+    return {}
+
+@view_config(route_name='test', renderer='ourdata:templates/examples.mak')
+def test(request):
     return {}

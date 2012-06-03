@@ -117,7 +117,7 @@ def create_dataset(request):
     route_name='dataset_get', 
     permission='datasets', 
     request_method='GET', 
-    renderer='ourdata:templates/create_dataset.pt'
+    renderer='ourdata:templates/create_dataset.mak'
 )
 def dataset_get(request):
     """Render the create_dataset template"""
