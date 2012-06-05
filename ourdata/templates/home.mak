@@ -1,3 +1,3 @@
-<%inherit file="base.mak" />
+<%inherit file="ourdata:templates/base.mak" />
 
 

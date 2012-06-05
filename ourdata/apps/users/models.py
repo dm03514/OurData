@@ -3,6 +3,17 @@ from mongoengine import *
 from ourdata.apps.common.exceptions import UserExists
 from ourdata.apps.common.utils import encrypt_password, validate_email
 
+class APICredential(EmbeddedDocument):
+    """
+    Contains credentials for a specific api.
+    """
+    public_key = StringField(required=True)
+    private_key = StringField(required=True)
+    is_active = BooleanField(required=True)
+    approval_datetime = DateTimeField()
+
+
+
 
 class User(Document):
     email = StringField(required=True)
@@ -30,7 +41,7 @@ class User(Document):
         encrypted_password = encrypt_password(password)
         try:
             user = cls.objects.get(email=email, 
-                            password=encrypted_password)
+                            password=encrypted_password, is_active=True)
             return user
         except cls.DoesNotExist:
             return None
