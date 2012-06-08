@@ -25,14 +25,16 @@ def main(global_config, **settings):
     # views.users
     config.add_route('login', '/login')
     config.add_route('logout', '/logout')
+    config.add_route('add_credentials', '/user/credentials/add/{user_id}/{dataset_id}/')
 
     # views.datasets
     config.add_route('dataset_create', '/dataset/create')
     config.add_route('dataset_get', '/dataset/get/{title}')
     config.add_route('column_create', '/dataset/{title}/column/create')
 
-    authn_policy = AuthTktAuthenticationPolicy('sosecret',
-                    callback=group_finder)
+    #import ipdb; ipdb.set_trace()
+    authn_policy = AuthTktAuthenticationPolicy(settings['auth.salt'], 
+        callback=group_finder)
     authz_policy = ACLAuthorizationPolicy()
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)

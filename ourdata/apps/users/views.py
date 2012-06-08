@@ -25,3 +25,8 @@ def login(request):
 def logout(request):
     """Log a user out by forgetting cookies"""
     return HTTPFound(location='/', headers=forget(request))
+
+
+@view_config(route_name='add_credentials', request_method='POST')
+def add_credentials(request):
+    raise Exception('Not Implemented')

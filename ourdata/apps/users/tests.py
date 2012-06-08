@@ -1,5 +1,5 @@
 from ourdata.apps.common.tests import TestTemplate
-from ourdata.apps.users.models import User
+from ourdata.apps.users.models import APICredentials, User
 
 
 class UsersTests(TestTemplate):
@@ -51,3 +51,16 @@ class UsersTests(TestTemplate):
         self.assertEqual(response.location, 'http://localhost/dashboard')
         response = self.testapp.get('/logout', status=302)
         self.assertEqual(response.location, 'http://localhost/')
+
+    def test_api_credential_key_generation(self):
+        """
+        Verify we can generate two random unique keys for a user's
+        access to a dataset.
+        """
+        credential = APICredentials()
+        credential.generate_credentials(
+            user_id=str(self.test_user.id), 
+            dataset_name='test', salt='random') 
+        self.assertNotEqual(credential.public_key, credential.private_key)
+        for field in credential:
+            self.assertTrue(getattr(credential, field))

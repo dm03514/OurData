@@ -31,7 +31,9 @@ class TestTemplate(unittest.TestCase):
 
     def setUp(self):
         from ourdata import main
-        app = main({}, **{'mongo_db_name': 'ourdata_test'})
+        settings_dict = {'mongo_db_name': 'ourdata_test',
+            'auth.salt': 'reallyrandom'}
+        app = main({}, **settings_dict)
         self.testapp = TestApp(app)
 
         self.test_email = 'test@test.com'

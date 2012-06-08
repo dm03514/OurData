@@ -1,9 +1,10 @@
 from datetime import datetime
+import hashlib
 from mongoengine import *
 from ourdata.apps.common.exceptions import UserExists
 from ourdata.apps.common.utils import encrypt_password, validate_email
 
-class APICredential(EmbeddedDocument):
+class APICredentials(EmbeddedDocument):
     """
     Contains credentials for a specific api.
     """
@@ -12,6 +13,23 @@ class APICredential(EmbeddedDocument):
     is_active = BooleanField(required=True)
     approval_datetime = DateTimeField()
 
+    def generate_credentials(self, user_id, dataset_name, salt):
+        self.is_active = True
+        self.approval_datetime = datetime.now()
+        self._generate_keys(user_id, dataset_name, salt)
+
+    def _generate_keys(self, user_id, dataset_name, salt):
+        """
+        Generate a set of keys for a specific dataset.
+        Does this even work?
+        """
+        h = hashlib.new('SHA1')
+        h.update(user_id)
+        h.update(dataset_name)
+        h.update(salt)
+        self.public_key = h.hexdigest()
+        h.update('private')
+        self.private_key = h.hexdigest()
 
 
 
@@ -69,7 +87,6 @@ class User(Document):
         encrypted_password = encrypt_password(password)
         now_datetime = datetime.now()
 
-        #import ipdb; ipdb.set_trace()
 
         new_user = cls(
             email = email, 
