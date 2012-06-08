@@ -1,4 +1,4 @@
-from ourdata.apps.users.models import User
+from ourdata.apps.users.models import APICredentials, User
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid, remember, forget
@@ -27,6 +27,31 @@ def logout(request):
     return HTTPFound(location='/', headers=forget(request))
 
 
-@view_config(route_name='add_credentials', request_method='POST')
+@view_config(route_name='add_credentials', request_method='POST', 
+             permission='users')
 def add_credentials(request):
-    raise Exception('Not Implemented')
+    """Create api credentials for a user for a specific dataset."""
+
+    # get the user
+    try:
+        user = User.objects.get(id=request.matchdict['user_id'])
+    except User.DoesNotExist:
+        raise Exception('User not found for id: %s' % 
+                            (request.matchdict['user_id']))
+
+    # get the dataset
+    try:
+        dataset = DatasetSchema.objects.get(id=request.matchdict['dataset_id'])
+    except DatasetSchema.DoesNotExist:
+        raise Exception('Dataset not found for id: %s' % 
+                            (request.matchdict['dataset_id']))
+       
+    credentials = APICredentials()
+    credential.generate_credentials(
+        user_id=user.id, 
+        dataset_name=dataset.title, 
+        salt=request.registry.settings['auth.salt']
+    ) 
+
+    user.api_credentials.append(credentials)
+    return {}

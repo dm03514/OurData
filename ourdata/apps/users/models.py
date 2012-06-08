@@ -43,6 +43,7 @@ class User(Document):
     datetime_joined = DateTimeField()
     groups = ListField(StringField())
     permissions = ListField(StringField())
+    api_credentials = ListField(EmbeddedDocumentField(APICredentials))
 
     def __unicode__(self):
         return '%s %s' % (self.first_name, self.last_name)

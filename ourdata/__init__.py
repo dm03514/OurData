@@ -25,7 +25,7 @@ def main(global_config, **settings):
     # views.users
     config.add_route('login', '/login')
     config.add_route('logout', '/logout')
-    config.add_route('add_credentials', '/user/credentials/add/{user_id}/{dataset_id}/')
+    config.add_route('add_credentials', '/user/credentials/add/{user_id}/{dataset_id}')
 
     # views.datasets
     config.add_route('dataset_create', '/dataset/create')
