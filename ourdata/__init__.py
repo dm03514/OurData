@@ -16,6 +16,14 @@ def main(global_config, **settings):
     )
     config.add_static_view('static', 'static', cache_max_age=3600)
 
+    # views.apis
+    config.add_route('api_field_get', '/api/{dataset_title}/{field_name}/get')
+
+    # views.datasets
+    config.add_route('dataset_create', '/dataset/create')
+    config.add_route('dataset_get', '/dataset/get/{title}')
+    config.add_route('column_create', '/dataset/{title}/column/create')
+
     # views.pages
     config.add_route('home', '/')
     config.add_route('signup', '/signup')
@@ -27,10 +35,6 @@ def main(global_config, **settings):
     config.add_route('logout', '/logout')
     config.add_route('add_credentials', '/user/credentials/add/{user_id}/{dataset_id}')
 
-    # views.datasets
-    config.add_route('dataset_create', '/dataset/create')
-    config.add_route('dataset_get', '/dataset/get/{title}')
-    config.add_route('column_create', '/dataset/{title}/column/create')
 
     #import ipdb; ipdb.set_trace()
     authn_policy = AuthTktAuthenticationPolicy(settings['auth.salt'], 

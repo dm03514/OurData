@@ -49,6 +49,7 @@ class TestTemplate(unittest.TestCase):
         # right now just delete the models that are used,  hacky
         User.objects.delete()
         DatasetSchema.objects.delete()
+        #import ipdb; ipdb.set_trace()
 
 
     def login(self, email, password):

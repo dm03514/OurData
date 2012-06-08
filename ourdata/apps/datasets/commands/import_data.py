@@ -34,7 +34,6 @@ def main():
     dict_reader = DictReader(f)
 
     # should we make sure that the input file has only the fields in
-    #import ipdb; ipdb.set_trace()
     # dataschema? 
     for line_dict in dict_reader:
         new_doc = {}
