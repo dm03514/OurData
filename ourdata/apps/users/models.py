@@ -2,7 +2,7 @@ from datetime import datetime
 import hashlib
 from mongoengine import *
 from ourdata.apps.common.exceptions import UserExists
-from ourdata.apps.common.utils import encrypt_password, validate_email
+from ourdata.apps.users.utils import encrypt_password, validate_email
 
 class APICredentials(EmbeddedDocument):
     """
