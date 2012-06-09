@@ -40,11 +40,19 @@ class TestTemplate(unittest.TestCase):
         # clean up in case the last test errored
         self.drop_all_connections()
 
+        # create an admin
+        self.create_admin_user()
+
+
+    def create_admin_user(self):
+        """
+        Create an admin user exposes it as self.test_user
+        """
         self.test_email = 'test@test.com'
         self.test_password = 'test'
         self.test_user = User.create_user(email=self.test_email,
                 first_name='test', last_name='test', 
-                password=self.test_password)
+                password=self.test_password, groups=['admin'])
 
 
     def tearDown(self):
@@ -56,6 +64,9 @@ class TestTemplate(unittest.TestCase):
 
 
     def drop_all_connections(self):
+        """
+        Loop through and delete all collections.
+        """
         db = connection.get_db()
         for collection_name in db.collection_names():
             if collection_name != 'system.indexes':
