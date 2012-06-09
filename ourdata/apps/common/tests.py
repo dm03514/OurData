@@ -30,19 +30,23 @@ class UtilsTests(unittest.TestCase):
 
 class TestTemplate(unittest.TestCase):
 
-    def setUp(self):
-        from ourdata import main
-        settings_dict = {'mongo_db_name': 'ourdata_test',
-            'auth.salt': 'reallyrandom'}
-        app = main({}, **settings_dict)
-        self.testapp = TestApp(app)
-
-        # clean up in case the last test errored
-        self.drop_all_connections()
-
-        # create an admin
-        self.create_admin_user()
-
+    def create_and_populate_dataset(self):
+        """
+        Create a test dataset and populate it with some random dattta
+        """
+        self.dataset_title = 'new_dataset'
+        post_params_dict = {'title': self.dataset_title}
+        response = self.testapp.post('/dataset/create', 
+                                    post_params_dict, status=302)
+        post_params_dict = {
+            'name': 'new_column',
+            'data_type': 'int',     
+        }
+        response = self.testapp.post('/dataset/%s/column/create' % (self.dataset_title), 
+                post_params_dict, status=200)
+        collection = self.db[self.dataset_title]
+        for i in range(20):
+                collection.insert({'new_column': i})
 
     def create_admin_user(self):
         """
@@ -54,25 +58,13 @@ class TestTemplate(unittest.TestCase):
                 first_name='test', last_name='test', 
                 password=self.test_password, groups=['admin'])
 
-
-    def tearDown(self):
-        testing.tearDown()
-        # make sure to clear test_db every time
-        # right now just delete the models that are used,  hacky
-        #import ipdb; ipdb.set_trace()
-        self.drop_all_connections()
-
-
     def drop_all_connections(self):
         """
         Loop through and delete all collections.
         """
-        db = connection.get_db()
-        for collection_name in db.collection_names():
+        for collection_name in self.db.collection_names():
             if collection_name != 'system.indexes':
-                db.drop_collection(collection_name)
-        
-
+                self.db.drop_collection(collection_name)
 
     def login(self, email, password):
         """
@@ -82,3 +74,22 @@ class TestTemplate(unittest.TestCase):
         response = self.testapp.post('/login', params=post_params, 
                                    status=302)
 
+    def setUp(self):
+        from ourdata import main
+        settings_dict = {'mongo_db_name': 'ourdata_test',
+            'auth.salt': 'reallyrandom'}
+        app = main({}, **settings_dict)
+        self.testapp = TestApp(app)
+        # get this db in pymongo interface for later
+        self.db = connection.get_db()
+        # clean up in case the last test errored
+        self.drop_all_connections()
+        # create an admin
+        self.create_admin_user()
+
+    def tearDown(self):
+        testing.tearDown()
+        # make sure to clear test_db every time
+        # right now just delete the models that are used,  hacky
+        #import ipdb; ipdb.set_trace()
+        self.drop_all_connections()
