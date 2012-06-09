@@ -1,4 +1,5 @@
 from ourdata.apps.users.models import User
+from ourdata.apps.apis.views import APIAuthFieldGetRequest
 from mongoengine import connect
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -18,6 +19,7 @@ def main(global_config, **settings):
 
     # views.apis
     config.add_route('api_field_get', '/api/{dataset_title}/{field_name}/get')
+    config.add_view(APIAuthFieldGetRequest)
 
     # views.datasets
     config.add_route('dataset_create', '/dataset/create')

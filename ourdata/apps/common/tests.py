@@ -1,3 +1,4 @@
+from mongoengine import connection
 from ourdata.apps.common.utils import validate_email
 from ourdata.apps.common.exceptions import ValidationError
 from ourdata.apps.datasets.models import DatasetSchema
@@ -36,6 +37,9 @@ class TestTemplate(unittest.TestCase):
         app = main({}, **settings_dict)
         self.testapp = TestApp(app)
 
+        # clean up in case the last test errored
+        self.drop_all_connections()
+
         self.test_email = 'test@test.com'
         self.test_password = 'test'
         self.test_user = User.create_user(email=self.test_email,
@@ -47,9 +51,16 @@ class TestTemplate(unittest.TestCase):
         testing.tearDown()
         # make sure to clear test_db every time
         # right now just delete the models that are used,  hacky
-        User.objects.delete()
-        DatasetSchema.objects.delete()
         #import ipdb; ipdb.set_trace()
+        self.drop_all_connections()
+
+
+    def drop_all_connections(self):
+        db = connection.get_db()
+        for collection_name in db.collection_names():
+            if collection_name != 'system.indexes':
+                db.drop_collection(collection_name)
+        
 
 
     def login(self, email, password):
