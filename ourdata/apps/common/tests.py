@@ -1,7 +1,6 @@
 from mongoengine import connection
-from ourdata.apps.common.exceptions import ValidationError
 from ourdata.apps.datasets.models import DatasetSchema
-from ourdata.apps.users.models import User
+from ourdata.apps.users.models import User, APICredentials
 import unittest
 from pyramid import testing
 from webtest import TestApp
@@ -18,7 +17,7 @@ class TestTemplate(unittest.TestCase):
         response = self.testapp.post('/dataset/create', 
                                     post_params_dict, status=302)
         post_params_dict = {
-            'name': 'new_column',
+            'name': 'int_column',
             'data_type': 'int',     
         }
         response = self.testapp.post('/dataset/%s/column/create' % (self.dataset_title), 
@@ -44,6 +43,17 @@ class TestTemplate(unittest.TestCase):
         for collection_name in self.db.collection_names():
             if collection_name != 'system.indexes':
                 self.db.drop_collection(collection_name)
+
+    def generate_credentials(self, user_obj, dataset_title):
+        """
+        Generate and grant credentials to a specific user.
+        """
+        credentials = APICredentials()
+        credentials.generate_credentials(
+            user_id=str(user_obj.id), 
+            dataset_name=dataset_title, salt='random') 
+        user_obj.api_credentials.append(credentials)
+        user_obj.save()
 
     def login(self, email, password):
         """

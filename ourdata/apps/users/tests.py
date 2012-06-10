@@ -14,7 +14,7 @@ class UsersTests(TestTemplate):
             'password': 'ourdata',
         }
         old_count = User.objects.all().count()
-        response = self.testapp.post('/signup', params=post_params, 
+        response = self.testapp.post('/signup?test[]=test&test[]=test2', params=post_params, 
                                    status=302)
         # make sure a user has been created.
         new_count = User.objects.all().count()

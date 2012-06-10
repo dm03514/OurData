@@ -32,7 +32,6 @@ class APICredentials(EmbeddedDocument):
         self.private_key = h.hexdigest()
 
 
-
 class User(Document):
     email = StringField(required=True)
     first_name = StringField(required=True, max_length=50)
@@ -87,7 +86,6 @@ class User(Document):
         # hash bpassword
         encrypted_password = encrypt_password(password)
         now_datetime = datetime.now()
-
 
         new_user = cls(
             email = email, 

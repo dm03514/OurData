@@ -14,6 +14,10 @@ from pyramid.view import view_config
 # querying
     - list of fields comma seperated? is that legal?
     - dates should be unix timestamps
+    - less_than = value
+    - greater_than = value
+    - equal = value
+
 
 
 decimal/integer/datetime fields should be able to have either >value <value or range
@@ -35,7 +39,7 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
     )
     def api_get(self):
 
-        import ipdb; ipdb.set_trace()
+        #import ipdb; ipdb.set_trace()
 
         try:    
             self.check_request_params(['sig', 'key'])
