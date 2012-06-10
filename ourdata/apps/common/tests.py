@@ -16,6 +16,8 @@ class TestTemplate(unittest.TestCase):
         post_params_dict = {'title': self.dataset_title}
         response = self.testapp.post('/dataset/create', 
                                     post_params_dict, status=302)
+        # attach this dataset to instance
+        self.dataset = DatasetSchema.objects.get(title=self.dataset_title)
         post_params_dict = {
             'name': 'int_column',
             'data_type': 'int',     
@@ -44,14 +46,14 @@ class TestTemplate(unittest.TestCase):
             if collection_name != 'system.indexes':
                 self.db.drop_collection(collection_name)
 
-    def generate_credentials(self, user_obj, dataset_title):
+    def generate_credentials(self, user_obj, dataset_obj):
         """
         Generate and grant credentials to a specific user.
         """
         credentials = APICredentials()
         credentials.generate_credentials(
             user_id=str(user_obj.id), 
-            dataset_name=dataset_title, salt='random') 
+            dataset_obj=self.dataset) 
         user_obj.api_credentials.append(credentials)
         user_obj.save()
 

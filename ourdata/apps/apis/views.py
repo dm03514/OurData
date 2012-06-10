@@ -40,7 +40,6 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
     def api_get(self):
 
         #import ipdb; ipdb.set_trace()
-
         try:    
             self.check_request_params(['sig', 'key'])
         except ParamNotFoundError as e:
@@ -57,5 +56,5 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
 
 
         # check signature
-
+        #if not is_authenticated_request(request.params.copy(), user.
         return {}

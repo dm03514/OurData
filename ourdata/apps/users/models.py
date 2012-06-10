@@ -12,11 +12,13 @@ class APICredentials(EmbeddedDocument):
     private_key = StringField(required=True)
     is_active = BooleanField(required=True)
     approval_datetime = DateTimeField()
+    dataset_id = ObjectIdField()
 
-    def generate_credentials(self, user_id, dataset_name, salt):
+    def generate_credentials(self, user_id, dataset_obj, salt='random'):
         self.is_active = True
         self.approval_datetime = datetime.now()
-        self._generate_keys(user_id, dataset_name, salt)
+        self.dataset_id = dataset_obj.id
+        self._generate_keys(user_id, dataset_obj.title, salt)
 
     def _generate_keys(self, user_id, dataset_name, salt):
         """

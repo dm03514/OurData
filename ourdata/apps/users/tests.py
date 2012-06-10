@@ -59,10 +59,12 @@ class UsersTests(TestTemplate):
         Verify we can generate two random unique keys for a user's
         access to a dataset.
         """
+        self.login(self.test_email, self.test_password)
+        self.create_and_populate_dataset()
         credential = APICredentials()
         credential.generate_credentials(
             user_id=str(self.test_user.id), 
-            dataset_name='test', salt='random') 
+            dataset_obj=self.dataset) 
         self.assertNotEqual(credential.public_key, credential.private_key)
         for field in credential:
             self.assertTrue(getattr(credential, field))

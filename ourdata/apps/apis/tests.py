@@ -13,7 +13,7 @@ class APIsTests(TestTemplate):
         # create dataset and add some records to it
         self.create_and_populate_dataset()
         # add credentials to the test_user object
-        self.generate_credentials(self.test_user, self.dataset_title)
+        self.generate_credentials(self.test_user, self.dataset)
 
         response = self.testapp.get('/api/%s/%s/get' % (self.dataset_title, 'int_column'))
         self.assertTrue(response.json['success'])
@@ -22,7 +22,7 @@ class APIsTests(TestTemplate):
         # create dataset and add some records to it
         self.login(self.test_email, self.test_password)
         self.create_and_populate_dataset()
-        self.generate_credentials(self.test_user, self.dataset_title)
+        self.generate_credentials(self.test_user, self.dataset)
         public_key = self.test_user.api_credentials[0].public_key
         private_key = self.test_user.api_credentials[0].private_key
         params_dict = {'key': public_key}
