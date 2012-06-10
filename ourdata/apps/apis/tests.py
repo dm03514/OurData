@@ -1,5 +1,6 @@
 from ourdata.apps.apis.utils import generate_request_sig, is_authenticated_request
 from ourdata.apps.common.tests import TestTemplate
+from urllib import urlencode
 
 
 class APIsTests(TestTemplate):
@@ -14,8 +15,14 @@ class APIsTests(TestTemplate):
         self.create_and_populate_dataset()
         # add credentials to the test_user object
         self.generate_credentials(self.test_user, self.dataset)
-
-        response = self.testapp.get('/api/%s/%s/get' % (self.dataset_title, 'int_column'))
+        public_key = self.test_user.api_credentials[0].public_key
+        private_key = self.test_user.api_credentials[0].private_key
+        params_dict = {'key': public_key}
+        params_dict['sig'] = generate_request_sig(params_dict, private_key)
+        #import ipdb; ipdb.set_trace()
+        response = self.testapp.get('/api/%s/%s/get?%s' % 
+            (self.dataset_title, 'int_column', urlencode(params_dict))
+        )
         self.assertTrue(response.json['success'])
 
     def test_generate_request_sig(self):

@@ -1,4 +1,7 @@
 from ourdata.apps.apis.base import AuthAPIRequestView, ParamNotFoundError
+from ourdata.apps.apis.utils import is_authenticated_request
+from ourdata.apps.datasets.models import DatasetSchema
+from ourdata.apps.users.models import User
 from pyramid.view import view_config
 
 
@@ -28,8 +31,6 @@ string should be able to do == and contains
 """
 
 
-
-
 class APIAuthFieldGetRequest(AuthAPIRequestView):
     
     @view_config(
@@ -39,22 +40,48 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
     )
     def api_get(self):
 
-        #import ipdb; ipdb.set_trace()
         try:    
             self.check_request_params(['sig', 'key'])
         except ParamNotFoundError as e:
             return {'success': False, 'message': e.message}
 
+        #import ipdb; ipdb.set_trace()
+        # get the dataset for this title check that it contains
+        try:
+            dataset = DatasetSchema.objects.get(
+                title=self.request.matchdict['dataset_title'],
+                fields__name=self.request.matchdict['field_name']
+            )
+        except DatasetSchema.DoesNotExist:
+            return {
+                'success': False,
+                'message': 'No Dataset named: %s' % 
+                    (self.request.matchdict['dataset_title'])
+            }
+
         # get user associated with this key
         try:
-            user = User.objects.get(id=self.request.GET['key'])
+            user = User.objects.get(
+                api_credentials__public_key=self.request.GET['key'],
+                api_credentials__dataset_id=dataset.id
+            )
         except User.DoesNotExist:
             return {
                 'success': False,
                 'message': 'No User exists for this key',
             }
 
-
+        credential = None
+        for api_credential in user.api_credentials:
+            if api_credential.public_key == self.request.GET['key']:
+                credential = api_credential
+                break
         # check signature
-        #if not is_authenticated_request(request.params.copy(), user.
-        return {}
+        if not is_authenticated_request(self.request.params.copy(), 
+                                                credential.private_key):
+            return {
+                'success': False,
+                'message': 'Invalid Signature',
+            }
+             
+        return {'success': True}

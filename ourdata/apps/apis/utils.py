@@ -1,6 +1,5 @@
 import hashlib
 from operator import itemgetter
-from urllib import urlencode
 
 
 def is_authenticated_request(params, private_key):
