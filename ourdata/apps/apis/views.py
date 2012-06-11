@@ -1,7 +1,8 @@
 from ourdata.apps.apis.base import AuthAPIRequestView, ParamNotFoundError
 from ourdata.apps.apis.utils import is_authenticated_request
 from ourdata.apps.datasets.models import DatasetSchema
-from ourdata.apps.users.models import APICredential, User
+from ourdata.apps.users.models import User
+from ourdata.apps.apis.models import APICredential
 from pyramid.view import view_config
 
 
@@ -45,7 +46,7 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
         except ParamNotFoundError as e:
             return {'success': False, 'message': e.message}
 
-        import ipdb; ipdb.set_trace()
+        #import ipdb; ipdb.set_trace()
         # get the dataset for this title check that it contains
         try:
             dataset = DatasetSchema.objects.get(

@@ -1,4 +1,5 @@
-from ourdata.apps.users.models import APICredential, User
+from ourdata.apps.users.models import User
+from ourdata.apps.apis.models import APICredential
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid, remember, forget

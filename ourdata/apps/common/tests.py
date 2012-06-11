@@ -1,6 +1,7 @@
 from mongoengine import connection
 from ourdata.apps.datasets.models import DatasetSchema
-from ourdata.apps.users.models import User, APICredential
+from ourdata.apps.users.models import User
+from ourdata.apps.apis.models import APICredential
 import unittest
 from pyramid import testing
 from webtest import TestApp

@@ -1,6 +1,7 @@
+from ourdata.apps.apis.models import APICredential
 from ourdata.apps.common.exceptions import ValidationError
 from ourdata.apps.common.tests import TestTemplate
-from ourdata.apps.users.models import APICredential, User
+from ourdata.apps.users.models import User
 from ourdata.apps.users.utils import validate_email
 
 
