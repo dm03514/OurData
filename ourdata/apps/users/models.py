@@ -4,7 +4,7 @@ from mongoengine import *
 from ourdata.apps.common.exceptions import UserExists
 from ourdata.apps.users.utils import encrypt_password, validate_email
 
-class APICredentials(EmbeddedDocument):
+class APICredential(Document):
     """
     Contains credentials for a specific api.
     """
@@ -13,20 +13,22 @@ class APICredentials(EmbeddedDocument):
     is_active = BooleanField(required=True)
     approval_datetime = DateTimeField()
     dataset_id = ObjectIdField()
+    user_id = ObjectIdField()
 
-    def generate_credentials(self, user_id, dataset_obj, salt='random'):
+    def generate_credential(self, user_id, dataset_obj, salt='random'):
         self.is_active = True
         self.approval_datetime = datetime.now()
         self.dataset_id = dataset_obj.id
-        self._generate_keys(user_id, dataset_obj.title, salt)
+        self.user_id = user_id
+        self._generate_keys(str(user_id), dataset_obj.title, salt)
 
-    def _generate_keys(self, user_id, dataset_name, salt):
+    def _generate_keys(self, user_id_str, dataset_name, salt):
         """
         Generate a set of keys for a specific dataset.
         Does this even work?
         """
         h = hashlib.new('SHA1')
-        h.update(user_id)
+        h.update(user_id_str)
         h.update(dataset_name)
         h.update(salt)
         self.public_key = h.hexdigest()
@@ -44,7 +46,6 @@ class User(Document):
     datetime_joined = DateTimeField()
     groups = ListField(StringField())
     permissions = ListField(StringField())
-    api_credentials = ListField(EmbeddedDocumentField(APICredentials))
 
     def __unicode__(self):
         return '%s %s' % (self.first_name, self.last_name)

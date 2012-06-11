@@ -1,6 +1,6 @@
 from mongoengine import connection
 from ourdata.apps.datasets.models import DatasetSchema
-from ourdata.apps.users.models import User, APICredentials
+from ourdata.apps.users.models import User, APICredential
 import unittest
 from pyramid import testing
 from webtest import TestApp
@@ -50,12 +50,11 @@ class TestTemplate(unittest.TestCase):
         """
         Generate and grant credentials to a specific user.
         """
-        credentials = APICredentials()
-        credentials.generate_credentials(
-            user_id=str(user_obj.id), 
+        credential = APICredential()
+        credential.generate_credential(
+            user_id=user_obj.id, 
             dataset_obj=self.dataset) 
-        user_obj.api_credentials.append(credentials)
-        user_obj.save()
+        return credential.save()
 
     def login(self, email, password):
         """

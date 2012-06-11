@@ -14,11 +14,9 @@ class APIsTests(TestTemplate):
         # create dataset and add some records to it
         self.create_and_populate_dataset()
         # add credentials to the test_user object
-        self.generate_credentials(self.test_user, self.dataset)
-        public_key = self.test_user.api_credentials[0].public_key
-        private_key = self.test_user.api_credentials[0].private_key
-        params_dict = {'key': public_key}
-        params_dict['sig'] = generate_request_sig(params_dict, private_key)
+        credential = self.generate_credentials(self.test_user, self.dataset)
+        params_dict = {'key': credential.public_key}
+        params_dict['sig'] = generate_request_sig(params_dict, credential.private_key)
         #import ipdb; ipdb.set_trace()
         response = self.testapp.get('/api/%s/%s/get?%s' % 
             (self.dataset_title, 'int_column', urlencode(params_dict))
@@ -29,9 +27,7 @@ class APIsTests(TestTemplate):
         # create dataset and add some records to it
         self.login(self.test_email, self.test_password)
         self.create_and_populate_dataset()
-        self.generate_credentials(self.test_user, self.dataset)
-        public_key = self.test_user.api_credentials[0].public_key
-        private_key = self.test_user.api_credentials[0].private_key
-        params_dict = {'key': public_key}
-        params_dict['sig'] = generate_request_sig(params_dict, private_key)
-        self.assertTrue(is_authenticated_request(params_dict, private_key))
+        credential = self.generate_credentials(self.test_user, self.dataset)
+        params_dict = {'key': credential.public_key}
+        params_dict['sig'] = generate_request_sig(params_dict, credential.private_key)
+        self.assertTrue(is_authenticated_request(params_dict, credential.private_key))

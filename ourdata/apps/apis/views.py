@@ -1,7 +1,7 @@
 from ourdata.apps.apis.base import AuthAPIRequestView, ParamNotFoundError
 from ourdata.apps.apis.utils import is_authenticated_request
 from ourdata.apps.datasets.models import DatasetSchema
-from ourdata.apps.users.models import User
+from ourdata.apps.users.models import APICredential, User
 from pyramid.view import view_config
 
 
@@ -45,7 +45,7 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
         except ParamNotFoundError as e:
             return {'success': False, 'message': e.message}
 
-        #import ipdb; ipdb.set_trace()
+        import ipdb; ipdb.set_trace()
         # get the dataset for this title check that it contains
         try:
             dataset = DatasetSchema.objects.get(
@@ -59,23 +59,20 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
                     (self.request.matchdict['dataset_title'])
             }
 
-        # get user associated with this key
+        # get credential associated with this request
         try:
-            user = User.objects.get(
-                api_credentials__public_key=self.request.GET['key'],
-                api_credentials__dataset_id=dataset.id
+            credential = APICredential.objects.get(
+                public_key=self.request.GET['key']
             )
-        except User.DoesNotExist:
+        except APICredential.DoesNotExist:
             return {
                 'success': False,
                 'message': 'No User exists for this key',
             }
 
-        credential = None
-        for api_credential in user.api_credentials:
-            if api_credential.public_key == self.request.GET['key']:
-                credential = api_credential
-                break
+        # get user associated with this credential
+        user = User.objects.get(id=credential.user_id)
+
         # check signature
         if not is_authenticated_request(self.request.params.copy(), 
                                                 credential.private_key):

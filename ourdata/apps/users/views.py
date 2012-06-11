@@ -1,4 +1,4 @@
-from ourdata.apps.users.models import APICredentials, User
+from ourdata.apps.users.models import APICredential, User
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid, remember, forget
@@ -46,12 +46,12 @@ def add_credentials(request):
         raise Exception('Dataset not found for id: %s' % 
                             (request.matchdict['dataset_id']))
        
-    credentials = APICredentials()
-    credential.generate_credentials(
+    credential = APICredential()
+    credential.generate_credential(
         user_id=user.id, 
         dataset_name=dataset.title, 
         salt=request.registry.settings['auth.salt']
     ) 
+    credential.save()
 
-    user.api_credentials.append(credentials)
     return {}
