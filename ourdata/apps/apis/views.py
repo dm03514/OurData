@@ -1,5 +1,5 @@
 from ourdata.apps.apis.base import AuthAPIRequestView, ParamNotFoundError
-from ourdata.apps.apis.utils import is_authenticated_request
+from ourdata.apps.apis.utils import is_authenticated_request, query_results
 from ourdata.apps.datasets.models import DatasetSchema
 from ourdata.apps.users.models import User
 from ourdata.apps.apis.models import APICredential
@@ -46,7 +46,6 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
         except ParamNotFoundError as e:
             return {'success': False, 'message': e.message}
 
-        #import ipdb; ipdb.set_trace()
         # get the dataset for this title check that it contains
         try:
             dataset = DatasetSchema.objects.get(
@@ -63,7 +62,9 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
         # get credential associated with this request
         try:
             credential = APICredential.objects.get(
-                public_key=self.request.GET['key']
+                public_key=self.request.GET['key'],
+                dataset_id=dataset.id,
+                is_active=True
             )
         except APICredential.DoesNotExist:
             return {
@@ -72,14 +73,18 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
             }
 
         # get user associated with this credential
-        user = User.objects.get(id=credential.user_id)
+        user = User.objects.get(id=credential.user_id, is_active=True)
 
+        params_dict = self.request.params.copy()
         # check signature
-        if not is_authenticated_request(self.request.params.copy(), 
-                                                credential.private_key):
+        if not is_authenticated_request(params_dict, credential.private_key):
             return {
                 'success': False,
                 'message': 'Invalid Signature',
             }
+
+        # all is good finally time to query!
+        results = query_results(dataset.title, 
+                self.request.matchdict['field_name'], params_dict)
              
         return {'success': True}

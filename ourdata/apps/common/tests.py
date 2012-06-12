@@ -27,7 +27,7 @@ class TestTemplate(unittest.TestCase):
                 post_params_dict, status=200)
         collection = self.db[self.dataset_title]
         for i in range(20):
-                collection.insert({'new_column': i})
+                collection.insert({'int_column': i})
 
     def create_admin_user(self):
         """

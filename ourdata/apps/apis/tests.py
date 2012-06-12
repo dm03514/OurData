@@ -15,7 +15,7 @@ class APIsTests(TestTemplate):
         self.create_and_populate_dataset()
         # add credentials to the test_user object
         credential = self.generate_credentials(self.test_user, self.dataset)
-        params_dict = {'key': credential.public_key}
+        params_dict = {'key': credential.public_key, 'less_than': 10}
         params_dict['sig'] = generate_request_sig(params_dict, credential.private_key)
         #import ipdb; ipdb.set_trace()
         response = self.testapp.get('/api/%s/%s/get?%s' % 
