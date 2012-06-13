@@ -1,5 +1,6 @@
-from mongoengine import connection
 import hashlib
+import json
+from mongoengine import connection
 from operator import itemgetter
 
 
@@ -34,22 +35,68 @@ def generate_request_sig(params_dict, private_key):
     return h.hexdigest()
 
 
-def query_results(collection_name, field_name, params_dict):
+class QueryHelper():
     """
-    Query a collection based on a set of user params.
+    Help abstract out the problem of querying over vastly
+    different dataschemas.
     """
-    import ipdb; ipdb.set_trace()
-    db = connection.get_db()
-    collection = db[collection_name]
-    query_dict = {}
-    if 'equal_to' in params_dict:
-       query_dict[field_name] = params_dict['equal_to'] 
-    else:
-        # check to see if this is a range query
-        # there has to be an eloquent way to do this.
-        # make sure that all values are of the correct type not str
-        if 'less_than' in params_dict:
-            query_dict[field_name] = {'$lt': params_dict['less_than']}
-        if 'greater_than' in params_dict:
-            query_dict[field_name] = {'$gt': params_dict['less_than']}
-    results = collection.find(query_dict)
+
+    def __init__(self, collection_name, field_name, params_dict):
+
+        self.limit = 100
+
+        # get this collection
+        db = connection.get_db()
+        self.collection = db[collection_name]
+
+        self.query_dict = self.build_query(field_name, params_dict)
+
+
+    def build_query(self, field_name, params_dict):
+        """
+        Populate query dict according to the request params.
+        @param params_dict multidict of GET params for this query
+        @return dict a mongo query ready to be executed by find
+        """
+        # add offset to `skip`
+        query_dict = {}
+        # if equalTo is present just use that to fetch result
+        if 'equalTo' in params_dict:
+           query_dict[field_name] = params_dict['equalTo'] 
+        elif self._has_range(params_dict):
+            if 'lessThan' in params_dict:
+                query_dict[field_name] = {'$lt': params_dict['lessThan']}
+            if 'greaterThan' in params_dict:
+                query_dict[field_name] = {'$gt': params_dict['lessThan']}
+            if 'lessThanEqualTo' in params_dict:
+                query_dict[field_name] = {'$lte': params_dict['lessThan']}
+            if 'greaterThanEqualTo' in params_dict:
+                query_dict[field_name] = {'$gte': params_dict['lessThan']}
+        return query_dict
+
+
+    def get_results(self, serialized_as='json'):
+        """
+        Return a list of results serialized according to the
+        given type'
+        """
+        # always add limit to this to keep queries quick
+        self.query_dict['limit'] = self.limit
+        # exclude id for right now?
+        results = self.collection.find(self.query_dict, {'_id': 0})
+        #return json.dumps(results)
+
+
+    def _has_range(self, params_dict):
+        """
+        Check whethere this is a range query so a proper query
+        dict can be built.
+        @return boolean 
+        """
+        has_range = False
+        range_params_list = ['lessThan', 'lessThanEqualTo',
+            'greaterThan', 'greaterThanEqualTo']
+        for range_param in range_params_list:
+            if range_param in params_dict:
+                has_range = True
+        return has_range

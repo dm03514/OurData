@@ -31,7 +31,8 @@ class DatasetSchema(Document):
     def __unicode__(self):
         return self.title
 
-    def convert_field_value(self, field_name, field_value_str):
+    def convert_field_value(self, field_name, field_value_str, 
+                                            from_timestamp=False):
         """
         Convert a given field_name's value to it's internal datatype.
         Raises a DataConversion error if there is an issue.
@@ -56,9 +57,12 @@ class DatasetSchema(Document):
         try:
             # check if this is a datateme becasues then we need
             # to pass the datetime formatting str
-            if field_declaration.data_type == 'datetime':
+            if field_declaration.data_type == 'datetime' and not from_timestamp:
                 return conversion_f(field_value_str, 
                                     field_declaration.datetime_format)
+            elif field_declaration.data_type == 'datetime' and from_timestamp:
+                # convert from timestamp
+                return datetime.fromtimestamp(field_value_str)
 
             # else just return the normal function
             return conversion_f(field_value_str)

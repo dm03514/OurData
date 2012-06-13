@@ -1,5 +1,5 @@
 from ourdata.apps.apis.base import AuthAPIRequestView, ParamNotFoundError
-from ourdata.apps.apis.utils import is_authenticated_request, query_results
+from ourdata.apps.apis.utils import is_authenticated_request, QueryHelper
 from ourdata.apps.datasets.models import DatasetSchema
 from ourdata.apps.users.models import User
 from ourdata.apps.apis.models import APICredential
@@ -59,6 +59,21 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
                     (self.request.matchdict['dataset_title'])
             }
 
+        params_dict = self.request.params.copy()
+
+        # all url values should be converted to the correct datatype
+
+        query_params_list = ['lessThan', 'lessThanEqualTo',
+            'greaterThan', 'greaterThanEqualTo', 'equalTo']
+        for query_param in query_params_list:
+            # check if the param is in params
+            value_str = params_dict.get(query_param)
+            if value_str:
+                params_dict[query_param] = dataset.convert_field_value(
+                    self.request.matchdict['field_name'], value_str,
+                    from_timestamp=True)
+        import ipdb; ipdb.set_trace()
+
         # get credential associated with this request
         try:
             credential = APICredential.objects.get(
@@ -75,7 +90,6 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
         # get user associated with this credential
         user = User.objects.get(id=credential.user_id, is_active=True)
 
-        params_dict = self.request.params.copy()
         # check signature
         if not is_authenticated_request(params_dict, credential.private_key):
             return {
@@ -84,7 +98,11 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
             }
 
         # all is good finally time to query!
-        results = query_results(dataset.title, 
-                self.request.matchdict['field_name'], params_dict)
+        query_helper = QueryHelper(
+            collection_name=dataset.title, 
+            field_name=self.request.matchdict['field_name'],
+            params_dict=params_dict
+        )
+        results = query_helper.get_results()
              
         return {'success': True}
