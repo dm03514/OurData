@@ -69,7 +69,7 @@ def get_user(request):
     """
     user_id = unauthenticated_userid(request)
     if user_id is not None:
-        return User.objects.get(id=user_id)
+        return User.objects.get(id=user_id, is_active=True)
 
 
 class Root(object):
