@@ -22,6 +22,7 @@ def signup_post(request):
     Process a request to sign a user up.  Returns errors or a
     redirect on success
     """
+    #import ipdb; ipdb.set_trace()
     required_params_list = ['first_name', 'last_name', 'email', 
                             'password']
     for param in required_params_list:
@@ -41,9 +42,8 @@ def signup_post(request):
             renderer='ourdata:templates/dashboard.mak')
 def dashboard(request):
     """Render the dashboard template"""
-    user_id = authenticated_userid(request)
-    if user_id is None:
-        raise Exception('Unauthenticated User!')
+    # this allows any user to request so check that user has a
+    # valid account
     return {}
 
 @view_config(route_name='test', renderer='ourdata:templates/examples.mak')

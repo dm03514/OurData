@@ -51,5 +51,4 @@ class DatasetsTests(TestTemplate):
 
         dataset = DatasetSchema.objects.get(title=title)
         self.assertEqual(len(dataset.fields), 1)
-        #import ipdb; ipdb.set_trace()
     

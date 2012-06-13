@@ -23,10 +23,28 @@
           <h1><a href="/">Our<span class="logo_colour">Data</span></a></h1>
           <h2>Open Source Data Management Platform</h2>
         </div>
-      </div>
+      </div><!--id:logo-->
+
+      <nav>
+        <ul class="sf-menu" id="nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/signup">Signup</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact Us</a></li>
+          <li><a href="https://github.com/dm03514/OurData.git">Github</a></li>
+        </ul>
+      </nav>
+
     </header>
 
     <div id="site_content">
+        <div class="content">
+            <%block name="content" />
+        </div>
+        <div class="sidebar_container">
+            <div class="sidebar">
+            </div>
+        </div>
     </div>
 
     <footer>
