@@ -3,6 +3,7 @@
 <%block name="title">Signup!</%block>
 
 <%block name="content">
+    <h2>Signup</h2>
     <form id="signup" method="POST" action="/signup">
         <div class="form_settings">
             <p>

@@ -1,4 +1,5 @@
 from ourdata.apps.common.exceptions import UserExists
+from ourdata.apps.apis.models import APICredential
 from ourdata.apps.users.models import User
 
 from pyramid.httpexceptions import HTTPFound
@@ -22,7 +23,6 @@ def signup_post(request):
     Process a request to sign a user up.  Returns errors or a
     redirect on success
     """
-    #import ipdb; ipdb.set_trace()
     required_params_list = ['first_name', 'last_name', 'email', 
                             'password']
     for param in required_params_list:
@@ -38,13 +38,23 @@ def signup_post(request):
     headers = remember(request, str(new_user.id))
     return HTTPFound(location='dashboard', headers=headers)
 
+
 @view_config(route_name='dashboard', request_method='GET', 
             renderer='ourdata:templates/dashboard.mak')
 def dashboard(request):
     """Render the dashboard template"""
     # this allows any user to request so check that user has a
     # valid account
-    return {}
+    #import ipdb; ipdb.set_trace()
+    if request.user is None:
+        raise Exception('User is not logged in')
+
+    credentials = APICredential.objects.filter(
+        user_id=request.user.id
+    )
+    # get all apis that this user belongs to 
+    return {'credentials': credentials}
+
 
 @view_config(route_name='test', renderer='ourdata:templates/examples.mak')
 def test(request):

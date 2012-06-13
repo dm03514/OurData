@@ -24,7 +24,8 @@
           <h2>Open Source Data Management Platform</h2>
         </div>
       </div><!--id:logo-->
-
+    
+    <%block name="navigation">
       <nav>
         <ul class="sf-menu" id="nav">
           <li><a href="/">Home</a></li>
@@ -34,6 +35,7 @@
           <li><a href="https://github.com/dm03514/OurData.git">Github</a></li>
         </ul>
       </nav>
+    </%block>
 
     </header>
 
@@ -43,6 +45,7 @@
         </div>
         <div class="sidebar_container">
             <div class="sidebar">
+                <%block name="sidebar" />
             </div>
         </div>
     </div>

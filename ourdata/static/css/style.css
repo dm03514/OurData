@@ -265,6 +265,14 @@ nav {
   padding: 15px 0;
 }
 
+.sidebar .form_settings input {
+    width: auto;
+}
+
+.sidebar .form_settings .submit {
+    margin-left: 145px;
+}
+
 .content { 
   text-align: left;
   width: 670px;
@@ -588,3 +596,4 @@ ul#images li {
   width: 155px;
   height: 300px;
 }
+
