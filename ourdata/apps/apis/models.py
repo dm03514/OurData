@@ -1,6 +1,6 @@
 from datetime import datetime
-import hashlib
 from mongoengine import *
+from ourdata.apps.apis.utils import generate_keys
 
 class APICredential(Document):
     """
@@ -13,22 +13,21 @@ class APICredential(Document):
     dataset_id = ObjectIdField()
     user_id = ObjectIdField()
 
-    def generate_credential(self, user_id, dataset_obj, salt='random'):
-        self.is_active = True
-        self.approval_datetime = datetime.now()
-        self.dataset_id = dataset_obj.id
-        self.user_id = user_id
-        self._generate_keys(str(user_id), dataset_obj.title, salt)
-
-    def _generate_keys(self, user_id_str, dataset_name, salt):
-        """
-        Generate a set of keys for a specific dataset.
-        Does this even work?
-        """
-        h = hashlib.new('SHA1')
-        h.update(user_id_str)
-        h.update(dataset_name)
-        h.update(salt)
-        self.public_key = h.hexdigest()
-        h.update('private')
-        self.private_key = h.hexdigest()
+    @classmethod
+    def generate_credential(cls, user_id, dataset_obj, salt='random'):
+        # check if credential already exists
+        try:
+            cls.objects.get(dataset_id=dataset_obj.id,
+                user_id=user_id)
+            raise Exception('Credential Already Exists')
+        except cls.DoesNotExist:
+            pass
+        new_credential = cls(
+            is_active=True,
+            approval_datetime=datetime.now(),
+            dataset_id=dataset_obj.id,
+            user_id=user_id,
+        )
+        new_credential.public_key, new_credential.private_key = generate_keys(str(user_id), dataset_obj.title, salt)
+        new_credential.save()
+        return new_credential

@@ -54,7 +54,7 @@ def main(global_config, **settings):
 
 def group_finder(user_id, request):
     """
-    Find a user's groups for a request.
+    Find an active user's groups for a request.
     """
     try:
         user = User.objects.get(id=user_id)

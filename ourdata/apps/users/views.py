@@ -47,12 +47,10 @@ def add_credentials(request):
         raise Exception('Dataset not found for id: %s' % 
                             (request.matchdict['dataset_id']))
        
-    credential = APICredential()
-    credential.generate_credential(
+    APICredential.generate_credential(
         user_id=user.id, 
         dataset_name=dataset.title, 
         salt=request.registry.settings['auth.salt']
     ) 
-    credential.save()
 
     return {}

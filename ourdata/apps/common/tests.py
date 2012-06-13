@@ -51,11 +51,10 @@ class TestTemplate(unittest.TestCase):
         """
         Generate and grant credentials to a specific user.
         """
-        credential = APICredential()
-        credential.generate_credential(
+        credential = APICredential.generate_credential(
             user_id=user_obj.id, 
             dataset_obj=self.dataset) 
-        return credential.save()
+        return credential
 
     def login(self, email, password):
         """

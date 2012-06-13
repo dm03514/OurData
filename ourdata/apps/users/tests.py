@@ -62,11 +62,9 @@ class UsersTests(TestTemplate):
         """
         self.login(self.test_email, self.test_password)
         self.create_and_populate_dataset()
-        credential = APICredential()
-        credential.generate_credential(
+        credential = APICredential.generate_credential(
             user_id=self.test_user.id, 
             dataset_obj=self.dataset) 
-        credential.save()
         self.assertNotEqual(credential.public_key, credential.private_key)
         for field in credential:
             self.assertTrue(getattr(credential, field))

@@ -36,6 +36,20 @@ def generate_request_sig(params_dict, private_key):
     h.update(cat_param_str)
     return h.hexdigest()
 
+def generate_keys(user_id_str, dataset_name, salt):
+    """
+    Generate a set of keys for a specific dataset.
+    Does this even work?
+    """
+    h = hashlib.new('SHA1')
+    h.update(user_id_str)
+    h.update(dataset_name)
+    h.update(salt)
+    public_key = h.hexdigest()
+    h.update('private')
+    private_key = h.hexdigest()
+    return public_key, private_key
+
 
 class QueryHelper():
     """
