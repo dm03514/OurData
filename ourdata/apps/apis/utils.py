@@ -1,7 +1,9 @@
 import hashlib
+from json import JSONEncoder
 import json
 from mongoengine import connection
 from operator import itemgetter
+from bson import json_util
 
 
 def is_authenticated_request(params, private_key):
@@ -80,11 +82,10 @@ class QueryHelper():
         Return a list of results serialized according to the
         given type'
         """
-        # always add limit to this to keep queries quick
-        self.query_dict['limit'] = self.limit
-        # exclude id for right now?
-        results = self.collection.find(self.query_dict, {'_id': 0})
-        #return json.dumps(results)
+        # exclude id for right now? {'_id': 0}
+        results = self.collection.find(self.query_dict,
+            limit=self.limit)
+        return json.dumps([x for x in results], default=json_util.default)
 
 
     def _has_range(self, params_dict):

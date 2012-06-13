@@ -72,7 +72,6 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
                 params_dict[query_param] = dataset.convert_field_value(
                     self.request.matchdict['field_name'], value_str,
                     from_timestamp=True)
-        import ipdb; ipdb.set_trace()
 
         # get credential associated with this request
         try:
@@ -97,6 +96,7 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
                 'message': 'Invalid Signature',
             }
 
+        #import ipdb; ipdb.set_trace()
         # all is good finally time to query!
         query_helper = QueryHelper(
             collection_name=dataset.title, 
@@ -104,5 +104,4 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
             params_dict=params_dict
         )
         results = query_helper.get_results()
-             
-        return {'success': True}
+        return {'success': True, 'results': results}
