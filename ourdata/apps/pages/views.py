@@ -45,13 +45,18 @@ def dashboard(request):
     """Render the dashboard template"""
     # this allows any user to request so check that user has a
     # valid account
+
     #import ipdb; ipdb.set_trace()
     if request.user is None:
         raise Exception('User is not logged in')
 
-    credentials = APICredential.objects.filter(
-        user_id=request.user.id
-    )
+    credential_params = {}
+    # if user is admin get ALL credentials
+    if not request.user.is_member_of('admin'):
+        credential_params = {user_id: request.user.id}
+
+    credentials = APICredential.objects.filter(**credential_params)
+
     # get all apis that this user belongs to 
     return {'credentials': credentials}
 

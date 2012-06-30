@@ -18,6 +18,24 @@ class User(Document):
     def __unicode__(self):
         return '%s %s' % (self.first_name, self.last_name)
 
+    def has_permission(self, permission):
+        """
+        Test to see if a user has a specific permission.
+        @param permission str the permission name
+        @return boolean
+        """
+        if permission in self.permissions:
+            return True
+        return False
+
+    def is_member_of(self, group):
+        """
+        Check if user is member of a group.
+        """
+        if group in self.groups:
+            return True
+        return False
+
     @classmethod
     def authenticate(cls, email, password):
         """
