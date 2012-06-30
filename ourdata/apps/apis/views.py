@@ -49,14 +49,14 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
         # get the dataset for this title check that it contains
         try:
             dataset = DatasetSchema.objects.get(
-                title=self.request.matchdict['dataset_title'],
+                title=self.request.matchdict['dataset_slug'],
                 fields__name=self.request.matchdict['field_name']
             )
         except DatasetSchema.DoesNotExist:
             return {
                 'success': False,
                 'message': 'No Dataset named: %s' % 
-                    (self.request.matchdict['dataset_title'])
+                    (self.request.matchdict['dataset_slug'])
             }
 
         params_dict = self.request.params.copy()

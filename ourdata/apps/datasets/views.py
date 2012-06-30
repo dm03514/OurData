@@ -20,13 +20,13 @@ def column_create(request):
     """
     try:
         dataset = DatasetSchema.objects.get(
-            title=request.matchdict['title']
+            slug=request.matchdict['slug']
         ) 
     except DatasetSchema.DoesNotExist:
         return {
             'success': False, 
             'message': 'No dataset named: %s' % 
-                (request.matchdict['title'])
+                (request.matchdict['slug'])
         }
     # make sure required params are here
     required_params_list = ['name', 'data_type']
@@ -85,7 +85,6 @@ def create_dataset(request):
     Create a new dataset schema.  
     Requires a unique collection name.
     """
-    #import ipdb; ipdb.set_trace()
     title = request.POST.get('title')
     if not title:
         raise Exception('title missing from request')
@@ -109,7 +108,7 @@ def create_dataset(request):
     new_dataset.save()
     
     location = request.route_url('dataset_get', 
-        title=new_dataset.title)
+        slug=new_dataset.slug)
     return HTTPFound(location=location)
 
 

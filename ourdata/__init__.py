@@ -18,13 +18,13 @@ def main(global_config, **settings):
     config.add_static_view('static', 'static', cache_max_age=3600)
 
     # views.apis
-    config.add_route('api_field_get', '/api/{dataset_title}/{field_name}/get')
+    config.add_route('api_field_get', '/api/{dataset_slug}/{field_name}/get')
     config.add_view(APIAuthFieldGetRequest)
 
     # views.datasets
     config.add_route('dataset_create', '/dataset/create')
-    config.add_route('dataset_get', '/dataset/get/{title}')
-    config.add_route('column_create', '/dataset/{title}/column/create')
+    config.add_route('dataset_get', '/dataset/get/{slug}')
+    config.add_route('column_create', '/dataset/{slug}/column/create')
 
     # views.pages
     config.add_route('home', '/')

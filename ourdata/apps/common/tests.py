@@ -23,8 +23,9 @@ class TestTemplate(unittest.TestCase):
             'name': 'int_column',
             'data_type': 'int',     
         }
-        response = self.testapp.post('/dataset/%s/column/create' % (self.dataset_title), 
-                post_params_dict, status=200)
+        url = str('/dataset/%s/column/create' % (self.dataset.slug))
+
+        response = self.testapp.post(url, post_params_dict, status=200)
         collection = self.db[self.dataset_title]
         for i in range(20):
                 collection.insert({'int_column': i})
@@ -81,5 +82,15 @@ class TestTemplate(unittest.TestCase):
         testing.tearDown()
         # make sure to clear test_db every time
         # right now just delete the models that are used,  hacky
-        #import ipdb; ipdb.set_trace()
         self.drop_all_connections()
+
+
+class CommonTests(TestTemplate):
+
+    def test_slugify(self):
+        """
+        Test that the slugify utiltity works.
+        """
+        from ourdata.apps.common.utils import slugify
+        title = u'This should be slugif":ed yall/'
+        self.assertEqual(slugify(title), u'this-should-be-slugifed-yall')

@@ -1,5 +1,6 @@
 from datetime import datetime
 from ourdata.apps.common.exceptions import DataConversionError, FieldNotFoundError
+from ourdata.apps.common.utils import slugify
 from mongoengine import *
 
 
@@ -30,6 +31,13 @@ class DatasetSchema(Document):
 
     def __unicode__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        """
+        Populate a slug field on save.
+        """
+        self.slug = slugify(self.title)
+        super(DatasetSchema, self).save(*args, **kwargs)
 
     def convert_field_value(self, field_name, field_value_str, 
                                             from_timestamp=False):
