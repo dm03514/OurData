@@ -9,6 +9,7 @@ from pyramid.view import view_config
 @view_config(route_name='home', renderer='ourdata:templates/home.mak')
 def home(request):
     """Render the home template"""
+    #import ipdb; ipdb.set_trace()
     return {'project':'OurData'}
 
 @view_config(route_name='signup', request_method='GET',
@@ -46,14 +47,13 @@ def dashboard(request):
     # this allows any user to request so check that user has a
     # valid account
 
-    #import ipdb; ipdb.set_trace()
     if request.user is None:
         raise Exception('User is not logged in')
 
     credential_params = {}
     # if user is admin get ALL credentials
     if not request.user.is_member_of('admin'):
-        credential_params = {user_id: request.user.id}
+        credential_params = {'user_id': request.user.id}
 
     credentials = APICredential.objects.filter(**credential_params)
 

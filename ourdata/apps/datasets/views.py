@@ -119,7 +119,8 @@ def create_dataset(request):
     renderer='ourdata:templates/create_dataset.mak'
 )
 def dataset_get(request):
-    """Render the create_dataset template"""
+    """Render the dataset template, show all fields, if admin allow
+    to add fields"""
     # make sure to get the title from here and load correctly
 
     # title should be valid and all form urls shoudl be appropriate

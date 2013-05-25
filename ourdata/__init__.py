@@ -58,7 +58,7 @@ def group_finder(user_id, request):
     """
     try:
         user = User.objects.get(id=user_id)
-        return [group for group in user.groups]
+        return user.groups
     except User.DoesNotExist:
         pass
 

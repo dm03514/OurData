@@ -7,3 +7,7 @@ It is a platform that allows for the easy sharing of data either programmaticall
 It allows for individuals with no technical backgrounds to make data sets easily available.  
 It is completely open source.  
 Our-Data aims to lower the barrier involved with making data accessible to those who can use it.
+
+
+View the roadmap on google docs:
+https://docs.google.com/document/d/1E7t2zFakKDN2hegoKKtawMemnC-lD5G_5W6KLIm99YU/edit?usp=sharing
