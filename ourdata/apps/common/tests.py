@@ -1,3 +1,4 @@
+from datetime import datetime
 from mongoengine import connection
 from ourdata.apps.datasets.models import DatasetSchema
 from ourdata.apps.users.models import User
@@ -8,6 +9,17 @@ from webtest import TestApp
 
 
 class TestTemplate(unittest.TestCase):
+
+    def create_dataset_schema(self):
+        """
+        """
+        dataset_schema = DatasetSchema(
+            create_by_user_id=self.test_user.id,
+            created_datetime=datetime.now(),
+            title=u'test'
+        )
+        dataset_schema.save()
+        return dataset_schema
 
     def create_and_populate_dataset(self):
         """

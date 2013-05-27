@@ -47,7 +47,6 @@ def column_create(request):
             'message': 'Data Type: %s not a valid data type' % (data_type),
         }
 
-    #import ipdb; ipdb.set_trace()
     # start building new field
     new_field = Field(
         name = name,

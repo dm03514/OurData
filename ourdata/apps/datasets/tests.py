@@ -1,5 +1,7 @@
+from datetime import datetime
 from ourdata.apps.common.tests import TestTemplate
-from ourdata.apps.datasets.models import DatasetSchema
+from ourdata.apps.datasets.models import DatasetSchema, Field
+import random
 
 
 class DatasetsTests(TestTemplate):
@@ -51,4 +53,22 @@ class DatasetsTests(TestTemplate):
 
         dataset = DatasetSchema.objects.get(title=title)
         self.assertEqual(len(dataset.fields), 1)
-    
+
+
+    def test_dataset_convert_field_value_int(self):
+        """
+        Tests that a datetime strings can succesffully converted to
+        native python values.
+        """
+        dataset_schema = self.create_dataset_schema()
+        new_field = Field(name='int_column',
+                          data_type='int',
+                          created_by_user_id=self.test_user.id,
+                          created_datetime=datetime.now())
+        dataset_schema.fields.append(new_field)
+        dataset_schema.save()
+        #import ipdb; ipdb.set_trace()
+        for i in range(10): 
+            rand_int = random.randint(1, 100000)
+            converted_value = dataset_schema.convert_field_value('int_column', str(rand_int))
+            self.assertEqual(converted_value, rand_int)

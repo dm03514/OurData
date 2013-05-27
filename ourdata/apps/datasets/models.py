@@ -42,10 +42,10 @@ class DatasetSchema(Document):
     def convert_field_value(self, field_name, field_value_str, 
                                             from_timestamp=False):
         """
-        Convert a given field_name's value to it's internal datatype.
+        Checks if dataset has a field matching `field_name`.  If it does convert
+        the value `field_value_str` to the native python datetime.
         Raises a DataConversion error if there is an issue.
         Might have to create a dictionary of fields to datatypes
-        Should this even be here???
         """
         # look for a field with this field_name
         field_declaration = None
