@@ -3,7 +3,7 @@ from datetime import datetime
 from ourdata.apps.datasets.models import DatasetSchema, Field, VALID_DATA_TYPES
 from ourdata.apps.users.models import User
 
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPMovedPermanently
 from pyramid.security import authenticated_userid
 from pyramid.view import view_config
 
@@ -12,7 +12,7 @@ from pyramid.view import view_config
     route_name='column_create', 
     permission='datasets', 
     request_method='POST', 
-    renderer='json',
+    #renderer='json',
 )
 def column_create(request):
     """
@@ -70,7 +70,7 @@ def column_create(request):
     # save the new field
     dataset.fields.append(new_field)
     dataset.save()
-    return {'success': True}
+    return HTTPMovedPermanently(location='/dataset/get/{}'.format(dataset.slug))
 
 
 @view_config(
@@ -134,5 +134,6 @@ def dataset_get(request):
     #import ipdb; ipdb.set_trace()
 
     return {
-        'dataset': dataset     
+        'dataset': dataset,
+        'valid_datatypes': VALID_DATA_TYPES     
     }

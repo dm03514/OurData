@@ -8,7 +8,11 @@
     <h2>Datasets</h2>
     <ul>
         % for dataset in datasets:
-            <li>${dataset}</li>
+            <li>
+                <a href="/dataset/get/${dataset.slug}">
+                    ${dataset}
+                </a>
+            </li>
         % endfor
     </ul>
     <h2>Users</h2>

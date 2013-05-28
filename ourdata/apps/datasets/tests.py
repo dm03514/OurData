@@ -48,8 +48,9 @@ class DatasetsTests(TestTemplate):
             'data_type': 'datetime',     
             'datetime_format': 'YYYY-mm-dd',
         }
-        response = self.testapp.post('/dataset/%s/column/create' % (title), post_params_dict, status=200)
-        self.assertTrue(response.json['success'])
+        response = self.testapp.post('/dataset/%s/column/create' % (title), 
+                                     post_params_dict, 
+                                     status=301)
 
         dataset = DatasetSchema.objects.get(title=title)
         self.assertEqual(len(dataset.fields), 1)

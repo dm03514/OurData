@@ -37,7 +37,7 @@ class TestTemplate(unittest.TestCase):
         }
         url = str('/dataset/%s/column/create' % (self.dataset.slug))
 
-        response = self.testapp.post(url, post_params_dict, status=200)
+        response = self.testapp.post(url, post_params_dict, status=301)
         collection = self.db[self.dataset_title]
         for i in range(20):
                 collection.insert({'int_column': i})
