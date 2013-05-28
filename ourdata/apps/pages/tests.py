@@ -16,3 +16,14 @@ class PagesTests(TestTemplate):
     def test_signup_get(self):
         result = self.testapp.get('/signup', status=200)
 
+    def test_admin_dashboard_get(self):
+        self._login(self.test_email, self.test_password)
+        response = self.testapp.get('/dashboard', status=302)
+        self.assertEqual(response.location, 'http://localhost/dashboard/admin')
+        #import ipdb; ipdb.set_trace()
+
+    def test_user_dashboard_get(self):
+        """
+        Tests that a normal user account can load their dashboard page with their API credentials.
+        """
+        self.fail()

@@ -11,7 +11,7 @@ class APIsTests(TestTemplate):
         Test that records can be pulled down using api_field_get.
         """
         #config.add_route('api_field_get', '/api/{dataset_title}/{field_name}/get')
-        self.login(self.test_email, self.test_password)
+        self._login(self.test_email, self.test_password)
         # create dataset and add some records to it
         self.create_and_populate_dataset()
         # add credentials to the test_user object
@@ -28,7 +28,7 @@ class APIsTests(TestTemplate):
 
     def test_generate_request_sig(self):
         # create dataset and add some records to it
-        self.login(self.test_email, self.test_password)
+        self._login(self.test_email, self.test_password)
         self.create_and_populate_dataset()
         credential = self.generate_credentials(self.test_user, self.dataset)
         params_dict = {'key': credential.public_key}

@@ -69,7 +69,7 @@ class TestTemplate(unittest.TestCase):
             dataset_obj=self.dataset) 
         return credential
 
-    def login(self, email, password):
+    def _login(self, email, password):
         """
         Logs a user in.
         """

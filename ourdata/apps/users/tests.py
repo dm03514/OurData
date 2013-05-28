@@ -41,7 +41,6 @@ class UsersTests(TestTemplate):
         response = self.testapp.post('/login', params=post_params, 
                                    status=302)
         self.assertEqual(response.location, 'http://localhost/dashboard')
-        #import ipdb; ipdb.set_trace()
 
     def test_logout(self):
         """
@@ -60,7 +59,7 @@ class UsersTests(TestTemplate):
         Verify we can generate two random unique keys for a user's
         access to a dataset.
         """
-        self.login(self.test_email, self.test_password)
+        self._login(self.test_email, self.test_password)
         self.create_and_populate_dataset()
         credential = APICredential.generate_credential(
             user_id=self.test_user.id, 
