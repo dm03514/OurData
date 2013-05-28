@@ -1,15 +1,15 @@
 from ourdata.apps.common.exceptions import UserExists
 from ourdata.apps.apis.models import APICredential
 from ourdata.apps.users.models import User
+from ourdata.apps.datasets.models import DatasetSchema
 
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPMovedPermanently
 from pyramid.security import authenticated_userid, remember
 from pyramid.view import view_config
 
 @view_config(route_name='home', renderer='ourdata:templates/home.mak')
 def home(request):
     """Render the home template"""
-    #import ipdb; ipdb.set_trace()
     return {'project':'OurData'}
 
 @view_config(route_name='signup', request_method='GET',
@@ -50,15 +50,40 @@ def dashboard(request):
     if request.user is None:
         raise Exception('User is not logged in')
 
+    # if user is admin redirect them to the admin page?
+    if request.user.is_admin:
+        return HTTPFound(location='dashboard/admin')
+
     credential_params = {}
     # if user is admin get ALL credentials
     if not request.user.is_member_of('admin'):
         credential_params = {'user_id': request.user.id}
 
+    #import ipdb; ipdb.set_trace()
     credentials = APICredential.objects.filter(**credential_params)
 
     # get all apis that this user belongs to 
-    return {'credentials': credentials}
+    return {
+        'credentials': credentials
+    }
+
+@view_config(route_name='dashboard_admin', request_method='GET', 
+            renderer='ourdata:templates/dashboard_admin.mak')
+def dashboard_admin(request):
+    """
+    Loads all data that admin sees. Renders it.
+    """
+    if request.user is None or not request.user.is_admin:
+        raise Exception('User is not logged in')
+
+    users = User.objects.all()
+    datasets = DatasetSchema.objects.all()
+
+    # get all users and all datasets
+    return {
+        'users': users,
+        'datasets': datasets
+    }
 
 
 @view_config(route_name='test', renderer='ourdata:templates/examples.mak')

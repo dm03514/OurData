@@ -68,7 +68,6 @@ def column_create(request):
             new_field.datetime_format = request.POST['datetime_format']
 
     # save the new field
-    #import ipdb; ipdb.set_trace()
     dataset.fields.append(new_field)
     dataset.save()
     return {'success': True}
@@ -115,12 +114,25 @@ def create_dataset(request):
     route_name='dataset_get', 
     permission='datasets', 
     request_method='GET', 
-    renderer='ourdata:templates/create_dataset.mak'
+    renderer='ourdata:templates/dataset_get.mak'
 )
 def dataset_get(request):
-    """Render the dataset template, show all fields, if admin allow
-    to add fields"""
-    # make sure to get the title from here and load correctly
+    """
+    Render the dataset template, show all fields, if admin allow
+    to add fields
+    """
+    try:
+        dataset = DatasetSchema.objects.get(
+            slug=request.matchdict['slug']
+        ) 
+    except DatasetSchema.DoesNotExist:
+        return {
+            'success': False, 
+            'message': 'No dataset named: %s' % 
+                (request.matchdict['slug'])
+        }
+    #import ipdb; ipdb.set_trace()
 
-    # title should be valid and all form urls shoudl be appropriate
-    return {}
+    return {
+        'dataset': dataset     
+    }

@@ -30,6 +30,7 @@ def main(global_config, **settings):
     config.add_route('home', '/')
     config.add_route('signup', '/signup')
     config.add_route('dashboard', '/dashboard')
+    config.add_route('dashboard_admin', '/dashboard/admin')
     config.add_route('test', '/test')
 
     # views.users

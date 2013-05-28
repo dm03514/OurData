@@ -36,6 +36,10 @@ class User(Document):
             return True
         return False
 
+    @property
+    def is_admin(self):
+        return self.is_member_of('admin') 
+
     @classmethod
     def authenticate(cls, email, password):
         """
