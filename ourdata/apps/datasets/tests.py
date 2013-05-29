@@ -61,7 +61,7 @@ class DatasetsTests(TestTemplate):
         Tests that a int strings can succesffully converted to
         native python values.
         """
-        dataset_schema = self.create_dataset_schema()
+        dataset_schema = self._create_dataset_schema()
         new_field = Field(name='int_column',
                           data_type='int',
                           created_by_user_id=self.test_user.id,
@@ -79,7 +79,7 @@ class DatasetsTests(TestTemplate):
         Tests that a datetime strings can succesffully converted to
         native python values.
         """
-        dataset_schema = self.create_dataset_schema()
+        dataset_schema = self._create_dataset_schema()
         date_format_str = '%Y-%m-%d'
         new_field = Field(name='datetime_column',
                           data_type='datetime',
@@ -102,7 +102,7 @@ class DatasetsTests(TestTemplate):
         """
         Tests that a 'float str' can be converteted to a float type in python.
         """
-        dataset_schema = self.create_dataset_schema()
+        dataset_schema = self._create_dataset_schema()
         new_field = Field(name='float_column',
                           data_type='decimal',
                           created_by_user_id=self.test_user.id,
@@ -120,7 +120,7 @@ class DatasetsTests(TestTemplate):
         """
         Tests that a str field can handle all strin input values.
         """
-        dataset_schema = self.create_dataset_schema()
+        dataset_schema = self._create_dataset_schema()
         new_field = Field(name='str_column',
                           data_type='str',
                           created_by_user_id=self.test_user.id,

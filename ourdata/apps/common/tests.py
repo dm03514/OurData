@@ -10,8 +10,9 @@ from webtest import TestApp
 
 class TestTemplate(unittest.TestCase):
 
-    def create_dataset_schema(self):
+    def _create_dataset_schema(self):
         """
+        Creates a test dataset schema.
         """
         dataset_schema = DatasetSchema(
             create_by_user_id=self.test_user.id,
@@ -21,7 +22,7 @@ class TestTemplate(unittest.TestCase):
         dataset_schema.save()
         return dataset_schema
 
-    def create_and_populate_dataset(self):
+    def _create_and_populate_dataset(self):
         """
         Create a test dataset and populate it with some random dattta
         """
@@ -42,7 +43,7 @@ class TestTemplate(unittest.TestCase):
         for i in range(20):
                 collection.insert({'int_column': i})
 
-    def create_admin_user(self):
+    def _create_admin_user(self):
         """
         Create an admin user exposes it as self.test_user
         """
@@ -52,7 +53,7 @@ class TestTemplate(unittest.TestCase):
                 first_name='test', last_name='test', 
                 password=self.test_password, groups=['admin'])
 
-    def drop_all_connections(self):
+    def _drop_all_collections(self):
         """
         Loop through and delete all collections.
         """
@@ -60,7 +61,7 @@ class TestTemplate(unittest.TestCase):
             if collection_name != 'system.indexes':
                 self.db.drop_collection(collection_name)
 
-    def generate_credentials(self, user_obj, dataset_obj):
+    def _generate_credentials(self, user_obj, dataset_obj):
         """
         Generate and grant credentials to a specific user.
         """
@@ -86,15 +87,15 @@ class TestTemplate(unittest.TestCase):
         # get this db in pymongo interface for later
         self.db = connection.get_db()
         # clean up in case the last test errored
-        self.drop_all_connections()
+        self._drop_all_collections()
         # create an admin
-        self.create_admin_user()
+        self._create_admin_user()
 
     def tearDown(self):
         testing.tearDown()
         # make sure to clear test_db every time
         # right now just delete the models that are used,  hacky
-        self.drop_all_connections()
+        self._drop_all_collections()
 
 
 class CommonTests(TestTemplate):

@@ -60,7 +60,7 @@ class UsersTests(TestTemplate):
         access to a dataset.
         """
         self._login(self.test_email, self.test_password)
-        self.create_and_populate_dataset()
+        self._create_and_populate_dataset()
         credential = APICredential.generate_credential(
             user_id=self.test_user.id, 
             dataset_obj=self.dataset) 

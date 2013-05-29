@@ -13,9 +13,9 @@ class APIsTests(TestTemplate):
         #config.add_route('api_field_get', '/api/{dataset_title}/{field_name}/get')
         self._login(self.test_email, self.test_password)
         # create dataset and add some records to it
-        self.create_and_populate_dataset()
+        self._create_and_populate_dataset()
         # add credentials to the test_user object
-        credential = self.generate_credentials(self.test_user, self.dataset)
+        credential = self._generate_credentials(self.test_user, self.dataset)
         params_dict = {'key': credential.public_key, 'lessThan': 10}
         params_dict['sig'] = generate_request_sig(params_dict, credential.private_key)
         response = self.testapp.get('/api/%s/%s/get?%s' % 
@@ -29,8 +29,8 @@ class APIsTests(TestTemplate):
     def test_generate_request_sig(self):
         # create dataset and add some records to it
         self._login(self.test_email, self.test_password)
-        self.create_and_populate_dataset()
-        credential = self.generate_credentials(self.test_user, self.dataset)
+        self._create_and_populate_dataset()
+        credential = self._generate_credentials(self.test_user, self.dataset)
         params_dict = {'key': credential.public_key}
         params_dict['sig'] = generate_request_sig(params_dict, credential.private_key)
         self.assertTrue(is_authenticated_request(params_dict, credential.private_key))
