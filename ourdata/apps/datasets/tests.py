@@ -58,7 +58,7 @@ class DatasetsTests(TestTemplate):
 
     def test_dataset_convert_field_value_int(self):
         """
-        Tests that a datetime strings can succesffully converted to
+        Tests that a int strings can succesffully converted to
         native python values.
         """
         dataset_schema = self.create_dataset_schema()
@@ -68,8 +68,71 @@ class DatasetsTests(TestTemplate):
                           created_datetime=datetime.now())
         dataset_schema.fields.append(new_field)
         dataset_schema.save()
-        #import ipdb; ipdb.set_trace()
         for i in range(10): 
             rand_int = random.randint(1, 100000)
             converted_value = dataset_schema.convert_field_value('int_column', str(rand_int))
             self.assertEqual(converted_value, rand_int)
+
+
+    def test_dataset_convert_field_value_datetime(self):
+        """
+        Tests that a datetime strings can succesffully converted to
+        native python values.
+        """
+        dataset_schema = self.create_dataset_schema()
+        date_format_str = '%Y-%m-%d'
+        new_field = Field(name='datetime_column',
+                          data_type='datetime',
+                          datetime_format=date_format_str, 
+                          created_by_user_id=self.test_user.id,
+                          created_datetime=datetime.now())
+        dataset_schema.fields.append(new_field)
+        dataset_schema.save()
+        test_dates = (
+            '2013-01-02',
+            '1999-02-23',
+            '2001-12-25',
+        )
+        for date_str in test_dates:
+            converted_datetime = dataset_schema.convert_field_value('datetime_column', date_str)
+            self.assertEqual(converted_datetime, datetime.strptime(date_str, date_format_str))
+
+
+    def test_dateset_convert_field_value_float(self):
+        """
+        Tests that a 'float str' can be converteted to a float type in python.
+        """
+        dataset_schema = self.create_dataset_schema()
+        new_field = Field(name='float_column',
+                          data_type='decimal',
+                          created_by_user_id=self.test_user.id,
+                          created_datetime=datetime.now())
+        dataset_schema.fields.append(new_field)
+        dataset_schema.save()
+        #import ipdb; ipdb.set_trace()
+        for i in range(10): 
+            rand_float_str = str(random.random() * 100)
+            converted_value = dataset_schema.convert_field_value('float_column', rand_float_str)
+            self.assertEqual(converted_value, float(rand_float_str))
+
+
+    def test_dataset_convert_field_value_str(self):
+        """
+        Tests that a str field can handle all strin input values.
+        """
+        dataset_schema = self.create_dataset_schema()
+        new_field = Field(name='str_column',
+                          data_type='str',
+                          created_by_user_id=self.test_user.id,
+                          created_datetime=datetime.now())
+        dataset_schema.fields.append(new_field)
+        dataset_schema.save()
+        test_strs = (
+            'Happy Day smile go',
+            'Love and compassion',
+            'friends and family',
+        )
+        for test_str in test_strs:
+            converted_str = dataset_schema.convert_field_value('str_column', test_str)
+            self.assertEqual(test_str, converted_str)
+        
