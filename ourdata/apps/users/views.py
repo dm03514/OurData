@@ -1,9 +1,24 @@
 from ourdata.apps.users.models import User
 from ourdata.apps.apis.models import APICredential
 
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 from pyramid.security import authenticated_userid, remember, forget
 from pyramid.view import view_config
+
+@view_config(route_name='edit_permissions', request_method='GET', 
+             renderer='ourdata:templates/users/edit_permissions.mak',
+             permission='admin')
+def edit_permissions(request):
+    """
+    Allows admin to edit permissions of a user
+    """
+    try:
+        user = User.objects.get(id=request.matchdict['user_id'])
+    except User.DoesNotExist:
+        return HTTPNotFound();
+
+    return {}
+
 
 @view_config(route_name='login', request_method='POST')
 def login(request):
@@ -21,6 +36,7 @@ def login(request):
 
     headers = remember(request, str(user.id))
     return HTTPFound(location='dashboard', headers=headers)
+
 
 @view_config(route_name='logout', request_method='GET')
 def logout(request):

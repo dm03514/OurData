@@ -68,7 +68,6 @@ class UsersTests(TestTemplate):
         Verify that an incorrect email can be detected,
         and a valid one can be detected.
         """
-
         #import ipdb; ipdb.set_trace()
         valid_email = 'test@test.com'
         invalid_email = 'testtest.com'
@@ -79,3 +78,13 @@ class UsersTests(TestTemplate):
             self.fail('invalid email not caught')
         except ValidationError:
             pass
+
+    def test_edit_users_permissions_page_load_success(self):
+        """
+        Tests that admin can load page that allows them to grant permissions to a specific
+        user.
+        """
+        new_user, new_user_password = self._create_test_user_through_signup_page()
+        self._login(self.test_email, self.test_password)
+        response = self.testapp.get('/user/permissions/edit/{}'.format(new_user.id), 
+                                    status=200)

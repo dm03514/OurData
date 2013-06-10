@@ -18,7 +18,13 @@
     <h2>Users</h2>
     <ul>
         % for user in users:
-            <li>${user}</li>
+            <li>
+                % if user.is_admin:
+                    ${user} - <b>is admin</b>
+                % else:
+                    <a href="${request.route_url('edit_permissions', user_id=user.id_as_str)}">${user}</a>
+                % endif
+            </li>
         % endfor
     </ul>
 </%block>

@@ -28,6 +28,13 @@ class User(Document):
             return True
         return False
 
+    @property
+    def id_as_str(self):
+        """
+        Returns the id as a string.
+        """
+        return str(self.id)
+
     def is_member_of(self, group):
         """
         Check if user is member of a group.
