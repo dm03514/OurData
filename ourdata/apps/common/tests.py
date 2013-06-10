@@ -53,6 +53,25 @@ class TestTemplate(unittest.TestCase):
                 first_name='test', last_name='test', 
                 password=self.test_password, groups=['admin'])
 
+    def _create_test_user_through_signup_page(self):
+        """
+        Creates a normal user with no permissions.  This is done by making a request to the
+        signup page, not by creating the user directly through the User model.
+        This returns a tuple the first item is the User object corresponding to this
+        user, and the second is the user password.
+        """
+        post_params = {
+            'first_name': 'Daniel',
+            'last_name': 'Mican',
+            'email': 'dm03514@gmail.com',
+            'password': 'ourdata',
+        }
+        response = self.testapp.post('/signup?test[]=test&test[]=test2', params=post_params, 
+                                   status=301)
+        user_password = post_params['password']
+        del post_params['password']
+        return User.objects.get(**post_params), user_password
+
     def _drop_all_collections(self):
         """
         Loop through and delete all collections.

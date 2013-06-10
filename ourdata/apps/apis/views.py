@@ -83,7 +83,7 @@ class APIAuthFieldGetRequest(AuthAPIRequestView):
         except APICredential.DoesNotExist:
             return {
                 'success': False,
-                'message': 'No User exists for this key',
+                'message': 'Invalid Key',
             }
 
         # get user associated with this credential

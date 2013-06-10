@@ -8,15 +8,10 @@ from ourdata.apps.users.utils import validate_email
 class UsersTests(TestTemplate):
 
     def test_new_user_signup_post(self):
-        post_params = {
-            'first_name': 'Daniel',
-            'last_name': 'Mican',
-            'email': 'dm03514@gmail.com',
-            'password': 'ourdata',
-        }
         old_count = User.objects.all().count()
-        response = self.testapp.post('/signup?test[]=test&test[]=test2', params=post_params, 
-                                   status=302)
+
+        self._create_test_user_through_signup_page()
+
         # make sure a user has been created.
         new_count = User.objects.all().count()
         self.assertEqual(new_count, old_count + 1)

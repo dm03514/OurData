@@ -37,7 +37,7 @@ def signup_post(request):
 
     # log user in and redirect
     headers = remember(request, str(new_user.id))
-    return HTTPFound(location='dashboard', headers=headers)
+    return HTTPMovedPermanently(location='dashboard', headers=headers)
 
 
 @view_config(route_name='dashboard', request_method='GET', 
@@ -52,7 +52,7 @@ def dashboard(request):
 
     # if user is admin redirect them to the admin page?
     if request.user.is_admin:
-        return HTTPFound(location='dashboard/admin')
+        return HTTPMovedPermanently(location='dashboard/admin')
 
     credential_params = {}
     # if user is admin get ALL credentials
