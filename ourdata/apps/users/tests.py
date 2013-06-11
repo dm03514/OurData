@@ -68,7 +68,6 @@ class UsersTests(TestTemplate):
         Verify that an incorrect email can be detected,
         and a valid one can be detected.
         """
-        #import ipdb; ipdb.set_trace()
         valid_email = 'test@test.com'
         invalid_email = 'testtest.com'
 
@@ -88,3 +87,21 @@ class UsersTests(TestTemplate):
         self._login(self.test_email, self.test_password)
         response = self.testapp.get('/user/permissions/edit/{}'.format(new_user.id), 
                                     status=200)
+
+    def test_add_user_new_dataset_api_credential(self):
+        """
+        Tests that an api credential can be generated and granted to a user.
+        """
+        # create a new user
+        new_user, new_user_password = self._create_test_user_through_signup_page()
+        # log in admin
+        self._login(self.test_email, self.test_password)
+        # create a new dataset
+        new_dataset = self._create_and_populate_dataset()
+        post_params_dict = {'dataset_id': new_dataset.id}
+        response = self.testapp.post('/user/credentials/add/{}'.format(new_user.id), post_params_dict, 
+                                     status=301) 
+        # make sure that the new credential was saved
+        new_credentials = APICredential.objects.filter(user_id=new_user.id, dataset_id=new_dataset.id)
+        self.assertEqual(1, new_credentials.count())
+        #import ipdb; ipdb.set_trace()

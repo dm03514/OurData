@@ -5,4 +5,6 @@
 <%block name="navigation"></%block>
 
 <%block name="content">
+    <form action="${request.route_url('add_credentials', user_id=user_id)}" method="post">
+    </form>
 </%block>

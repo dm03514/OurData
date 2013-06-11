@@ -1,13 +1,14 @@
-from ourdata.apps.users.models import User
-from ourdata.apps.apis.models import APICredential
-
-from pyramid.httpexceptions import HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPFound, HTTPNotFound, HTTPClientError, HTTPMovedPermanently
 from pyramid.security import authenticated_userid, remember, forget
 from pyramid.view import view_config
 
+from ourdata.apps.apis.models import APICredential
+from ourdata.apps.datasets.models import DatasetSchema
+from ourdata.apps.users.models import User
+
 @view_config(route_name='edit_permissions', request_method='GET', 
              renderer='ourdata:templates/users/edit_permissions.mak',
-             permission='admin')
+             permission='users')
 def edit_permissions(request):
     """
     Allows admin to edit permissions of a user
@@ -17,7 +18,9 @@ def edit_permissions(request):
     except User.DoesNotExist:
         return HTTPNotFound();
 
-    return {}
+    return {
+        'user_id': request.matchdict['user_id']    
+    }
 
 
 @view_config(route_name='login', request_method='POST')
@@ -48,25 +51,27 @@ def logout(request):
              permission='users')
 def add_credentials(request):
     """Create api credentials for a user for a specific dataset."""
+    dataset_id = request.POST.get('dataset_id')
+    if not dataset_id:
+        return HTTPClientError()
 
     # get the user
     try:
         user = User.objects.get(id=request.matchdict['user_id'])
     except User.DoesNotExist:
-        raise Exception('User not found for id: %s' % 
-                            (request.matchdict['user_id']))
+        return HTTPNotFound()
 
     # get the dataset
     try:
-        dataset = DatasetSchema.objects.get(id=request.matchdict['dataset_id'])
+        dataset = DatasetSchema.objects.get(id=request.POST['dataset_id'])
     except DatasetSchema.DoesNotExist:
-        raise Exception('Dataset not found for id: %s' % 
-                            (request.matchdict['dataset_id']))
+        return HTTPNotFound()
        
     APICredential.generate_credential(
         user_id=user.id, 
-        dataset_name=dataset.title, 
+        dataset_obj=dataset, 
         salt=request.registry.settings['auth.salt']
     ) 
 
-    return {}
+    return HTTPMovedPermanently(location=request.route_url('add_credentials', user_id=request.matchdict['user_id']), 
+                     headers=forget(request))

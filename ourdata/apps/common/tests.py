@@ -42,6 +42,7 @@ class TestTemplate(unittest.TestCase):
         collection = self.db[self.dataset_title]
         for i in range(20):
                 collection.insert({'int_column': i})
+        return self.dataset
 
     def _create_admin_user(self):
         """

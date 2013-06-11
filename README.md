@@ -16,8 +16,7 @@ Our-Data should provide a number of features:
 - The a ability to handle large numbers of requests and uploads efficiently. aka good performance.
 - The ability to handle huge data sets.
 
-
-Our-data.org was inspired by a couple of things.  There doesn’t exist an open source data platform that allows for easy management of large data sets.  Communication between the government and necessary organizations is horrid at best.  Take health insurance for example.  Many specialists, doctors, healers (anyone that accepts insurance) need to spend long manual hours communicating with insurance providers about clients and their coverage.  This should not be a manual process.
+Our-Data aims to be the absolute simpliest solution to sharing data.  All that should be required to setting up a fully functional api, that supports authentication, and rate limiting out of the box, should be defining a schema and uploading a csv.
 
 ---
 Our-Data.org is an open source Data Management System.  
