@@ -18,7 +18,12 @@ def edit_permissions(request):
     except User.DoesNotExist:
         return HTTPNotFound();
 
+    user_credentials = APICredential.objects.filter(user_id=request.matchdict['user_id']) 
+    all_datasets = DatasetSchema.objects.all()
+
     return {
+        'all_datasets': all_datasets,
+        'user_credentials': user_credentials,
         'user_id': request.matchdict['user_id']    
     }
 
@@ -66,6 +71,7 @@ def add_credentials(request):
         dataset = DatasetSchema.objects.get(id=request.POST['dataset_id'])
     except DatasetSchema.DoesNotExist:
         return HTTPNotFound()
+
        
     APICredential.generate_credential(
         user_id=user.id, 
@@ -73,5 +79,5 @@ def add_credentials(request):
         salt=request.registry.settings['auth.salt']
     ) 
 
-    return HTTPMovedPermanently(location=request.route_url('add_credentials', user_id=request.matchdict['user_id']), 
-                     headers=forget(request))
+    return HTTPMovedPermanently(location=request.route_url('edit_permissions', 
+                                                           user_id=request.matchdict['user_id']))

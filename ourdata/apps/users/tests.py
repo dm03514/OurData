@@ -104,4 +104,5 @@ class UsersTests(TestTemplate):
         # make sure that the new credential was saved
         new_credentials = APICredential.objects.filter(user_id=new_user.id, dataset_id=new_dataset.id)
         self.assertEqual(1, new_credentials.count())
+        self.assertTrue('/user/permissions/edit/{}'.format(new_user.id) in response.location)
         #import ipdb; ipdb.set_trace()
