@@ -6,16 +6,22 @@
 
 <%block name="content">
     % if credentials:
-        % for credential in credentials:
-            ${credential}
-        % endfor
+        <table>
+            <tr>
+                <th>Dataset ID</th>
+                <th>Public Key</th>
+                <th>Private Key</th>
+            </tr>
+
+            % for credential in credentials:
+                <td>
+                    ${credential.dataset_id}
+                </td>
+                <td>${credential.public_key}</td>
+                <td>${credential.private_key}</td>
+            % endfor
+        </table>
     % endif
 </%block>
 
-<%block name="sidebar">
-    <h3>Links</h3>
-    <ul>
-        <li></li>
-        <li></li>
-    </ul>
-</%block>
+<%block name="sidebar"></%block>

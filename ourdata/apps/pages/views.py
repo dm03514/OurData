@@ -54,13 +54,8 @@ def dashboard(request):
     if request.user.is_admin:
         return HTTPMovedPermanently(location='dashboard/admin')
 
-    credential_params = {}
-    # if user is admin get ALL credentials
-    if not request.user.is_member_of('admin'):
-        credential_params = {'user_id': request.user.id}
-
     #import ipdb; ipdb.set_trace()
-    credentials = APICredential.objects.filter(**credential_params)
+    credentials = APICredential.objects.filter(user_id=request.user.id)
 
     # get all apis that this user belongs to 
     return {
