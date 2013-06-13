@@ -1,10 +1,13 @@
-from ourdata.apps.common.tests import TestTemplate
-from ourdata.apps.users.models import User
 import os
 import unittest
-from webtest import TestApp
+from urlparse import urlparse
 
 from pyramid import testing
+from webtest import TestApp
+
+from ourdata.apps.common.tests import TestTemplate
+from ourdata.apps.users.models import User
+
 
 class PagesTests(TestTemplate):
     """Functional tests for all views.  If enough views split
@@ -20,7 +23,6 @@ class PagesTests(TestTemplate):
         self._login(self.test_email, self.test_password)
         response = self.testapp.get('/dashboard', status=301)
         self.assertEqual(response.location, 'http://localhost/dashboard/admin')
-        #import ipdb; ipdb.set_trace()
 
     def test_user_dashboard_get(self):
         """
@@ -30,3 +32,20 @@ class PagesTests(TestTemplate):
         new_user, new_user_password = self._create_test_user_through_signup_page()
         self._login(new_user.email, new_user_password)
         response = self.testapp.get('/dashboard', status=200)
+
+    def test_login_required_dashboard_redirect(self):
+        """
+        Tests that if a user is not logged in, they are redirected to home page if
+        they try to access the dashboard.
+        """
+        response = self.testapp.get('/dashboard', status=301)
+        self.assertEqual(urlparse(response.location).path, '/')
+        #import ipdb; ipdb.set_trace()
+
+    def test_login_required_admin_dashboard_redirect(self):
+        """
+        Tests that if a user is not logged in, they are redirected to home page if
+        they try to access the admin dashboard.
+        """
+        response = self.testapp.get('/dashboard/admin', status=301)
+        self.assertEqual(urlparse(response.location).path, '/')

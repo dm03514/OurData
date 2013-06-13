@@ -1,11 +1,13 @@
+from pyramid.httpexceptions import HTTPFound, HTTPMovedPermanently
+from pyramid.security import authenticated_userid, remember
+from pyramid.view import view_config
+
 from ourdata.apps.common.exceptions import UserExists
+from ourdata.apps.common.decorators import login_required
 from ourdata.apps.apis.models import APICredential
 from ourdata.apps.users.models import User
 from ourdata.apps.datasets.models import DatasetSchema
 
-from pyramid.httpexceptions import HTTPFound, HTTPMovedPermanently
-from pyramid.security import authenticated_userid, remember
-from pyramid.view import view_config
 
 @view_config(route_name='home', renderer='ourdata:templates/home.mak')
 def home(request):
@@ -41,14 +43,10 @@ def signup_post(request):
 
 
 @view_config(route_name='dashboard', request_method='GET', 
-            renderer='ourdata:templates/dashboard.mak')
+             renderer='ourdata:templates/dashboard.mak',
+             decorator=login_required)
 def dashboard(request):
     """Render the dashboard template"""
-    # this allows any user to request so check that user has a
-    # valid account
-
-    if request.user is None:
-        raise Exception('User is not logged in')
 
     # if user is admin redirect them to the admin page?
     if request.user.is_admin:
@@ -63,12 +61,13 @@ def dashboard(request):
     }
 
 @view_config(route_name='dashboard_admin', request_method='GET', 
-            renderer='ourdata:templates/dashboard_admin.mak')
+            renderer='ourdata:templates/dashboard_admin.mak',
+            decorator=login_required)
 def dashboard_admin(request):
     """
     Loads all data that admin sees. Renders it.
     """
-    if request.user is None or not request.user.is_admin:
+    if not request.user.is_admin:
         raise Exception('User is not logged in')
 
     users = User.objects.all()

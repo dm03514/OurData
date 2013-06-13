@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from ourdata.apps.common.decorators import login_required
 from ourdata.apps.datasets.models import DatasetSchema, Field, VALID_DATA_TYPES
 from ourdata.apps.users.models import User
 
@@ -114,7 +115,8 @@ def create_dataset(request):
     route_name='dataset_get', 
     permission='datasets', 
     request_method='GET', 
-    renderer='ourdata:templates/dataset_get.mak'
+    renderer='ourdata:templates/dataset_get.mak',
+    decorator=login_required
 )
 def dataset_get(request):
     """

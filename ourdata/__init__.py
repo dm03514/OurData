@@ -42,7 +42,7 @@ def main(global_config, **settings):
 
     #import ipdb; ipdb.set_trace()
     authn_policy = AuthTktAuthenticationPolicy(settings['auth.salt'], 
-        callback=group_finder)
+        callback=group_finder, hashalg='sha512')
     authz_policy = ACLAuthorizationPolicy()
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
@@ -79,6 +79,7 @@ class Root(object):
     __acl__ = [
         (Allow, 'admin', ALL_PERMISSIONS),
     ]
+    #http://docs.pylonsproject.org/projects/pyramid/en/latest/tutorials/wiki/authorization.html
 
     def __init__(self, request):
         self.request = request
