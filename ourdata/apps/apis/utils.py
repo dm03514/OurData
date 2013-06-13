@@ -6,9 +6,9 @@ from operator import itemgetter
 from bson import json_util
 
 
-def is_authenticated_request(params, private_key):
+def is_valid_hmac_request(params, private_key):
     """
-    Check to see if a request is authenticated or not.
+    Check to see if a request is a valid hmac request
     @params multidict a multidict of params
     @return boolean
     """

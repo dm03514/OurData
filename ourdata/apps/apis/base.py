@@ -10,13 +10,11 @@ class ParamNotFoundError(Exception):
 
 class APIBaseView(object):
 
-
     def __init__(self, request):
         """
         Make sure that store request for later use.
         """
         self.request = request
-
 
     def check_request_params(self, required_params_list):
         """
@@ -27,10 +25,9 @@ class APIBaseView(object):
             if not self.request.GET.get(param):
                 raise ParamNotFoundError('Missing %s from request' % (param))
 
-
     def is_authenticated(self):
         """
         Abstract method which checks if a request is authenticated.
         @return boolean 
         """
-        raise Exception('Not Implemented')
+        raise NotImplementedError() 

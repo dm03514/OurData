@@ -19,8 +19,9 @@ def main(global_config, **settings):
 
     # views.apis
     config.add_route('api_field_get', '/api/{dataset_slug}/{field_name}/get')
-    #config.add_route('api_get', '/api/{dataset_slug}')
-    config.add_view(APIFieldRequest)
+    config.add_view(APIFieldRequest, name='field_request')
+    config.add_route('api_request', '/api/{dataset_slug}')
+    config.add_view(APIRequest, name='dataset_request')
 
     # views.datasets
     config.add_route('dataset_create', '/dataset/create')

@@ -1,9 +1,11 @@
+from pyramid.view import view_config
+
+from ourdata.apps.apis.authentication import HMACAuthenticationMixin
 from ourdata.apps.apis.base import APIBaseView, ParamNotFoundError
-from ourdata.apps.apis.utils import is_authenticated_request, QueryHelper
+from ourdata.apps.apis.models import APICredential
+from ourdata.apps.apis.utils import is_valid_hmac_request, QueryHelper
 from ourdata.apps.datasets.models import DatasetSchema
 from ourdata.apps.users.models import User
-from ourdata.apps.apis.models import APICredential
-from pyramid.view import view_config
 
 
 """
@@ -90,7 +92,7 @@ class APIFieldRequest(APIBaseView):
         user = User.objects.get(id=credential.user_id, is_active=True)
 
         # check signature
-        if not is_authenticated_request(params_dict, credential.private_key):
+        if not is_valid_hmac_request(params_dict, credential.private_key):
             return {
                 'success': False,
                 'message': 'Invalid Signature',
@@ -107,5 +109,14 @@ class APIFieldRequest(APIBaseView):
         return {'success': True, 'results': results}
 
 
-class APIRequest():
-    pass
+class APIRequest(HMACAuthenticationMixin, APIBaseView):
+
+    @view_config(
+        route_name='api_request', 
+        renderer='json'
+    )
+    def api_request(self):
+        return {'hi': 'hi'}
+
+    def get(self):
+        pass

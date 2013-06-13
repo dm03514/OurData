@@ -1,5 +1,5 @@
 import json
-from ourdata.apps.apis.utils import generate_request_sig, is_authenticated_request
+from ourdata.apps.apis.utils import generate_request_sig, is_valid_hmac_request
 from ourdata.apps.common.tests import TestTemplate
 from urllib import urlencode
 
@@ -33,4 +33,4 @@ class APIsTests(TestTemplate):
         credential = self._generate_credentials(self.test_user, self.dataset)
         params_dict = {'key': credential.public_key}
         params_dict['sig'] = generate_request_sig(params_dict, credential.private_key)
-        self.assertTrue(is_authenticated_request(params_dict, credential.private_key))
+        self.assertTrue(is_valid_hmac_request(params_dict, credential.private_key))
