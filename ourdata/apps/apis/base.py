@@ -8,7 +8,7 @@ class ParamNotFoundError(Exception):
     pass
 
 
-class AuthAPIRequestView(object):
+class APIBaseView(object):
 
 
     def __init__(self, request):
@@ -28,9 +28,9 @@ class AuthAPIRequestView(object):
                 raise ParamNotFoundError('Missing %s from request' % (param))
 
 
-    def is_valid_sig(self):
+    def is_authenticated(self):
         """
-        Check that a signature for a request is valid.
+        Abstract method which checks if a request is authenticated.
         @return boolean 
         """
-        pass
+        raise Exception('Not Implemented')
