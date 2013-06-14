@@ -1,7 +1,7 @@
 from ourdata.apps.apis.utils import is_valid_hmac_request
 
 
-class HMACAuthenticationMixin(object):
+class HMACAuthenticator(object):
     
     def is_authenticated(self, request_params_dict, private_key):
         """

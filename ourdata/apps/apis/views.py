@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 
-from ourdata.apps.apis.authentication import HMACAuthenticationMixin
+from ourdata.apps.apis.authentication import HMACAuthenticator
 from ourdata.apps.apis.base import APIBaseView, ParamNotFoundError
 from ourdata.apps.apis.models import APICredential
 from ourdata.apps.apis.utils import is_valid_hmac_request, QueryHelper
@@ -109,7 +109,15 @@ class APIFieldRequest(APIBaseView):
         return {'success': True, 'results': results}
 
 
-class APIRequest(HMACAuthenticationMixin, APIBaseView):
+class APIRequest(APIBaseView):
+
+    authenticator = HMACAuthenticator()
+
+    @view_config(
+        route_name='api_request', 
+    )
+    def api_request(self):
+        return super(APIRequest, self).api_request()
 
     def get(self):
-        pass
+        return {}

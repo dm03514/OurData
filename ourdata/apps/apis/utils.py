@@ -30,7 +30,7 @@ def generate_request_sig(params_dict, private_key):
     # sort params_dict by key
     sorted_list = sorted(params_dict.items(), key=itemgetter(0))
     # combine all values into a string
-    cat_param_str = ''.join('%s%s' % (x[0], x[1]) for x in sorted_list)
+    cat_param_str = ''.join(['%s%s' % (x[0], x[1]) for x in sorted_list])
     # concat private_key
     cat_param_str += private_key
     # hash all everything together!
