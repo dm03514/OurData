@@ -111,12 +111,5 @@ class APIFieldRequest(APIBaseView):
 
 class APIRequest(HMACAuthenticationMixin, APIBaseView):
 
-    @view_config(
-        route_name='api_request', 
-        renderer='json'
-    )
-    def api_request(self):
-        return {'hi': 'hi'}
-
     def get(self):
         pass

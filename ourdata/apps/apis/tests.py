@@ -1,7 +1,8 @@
 import json
+from urllib import urlencode
+
 from ourdata.apps.apis.utils import generate_request_sig, is_valid_hmac_request
 from ourdata.apps.common.tests import TestTemplate
-from urllib import urlencode
 
 
 class APIsTests(TestTemplate):
@@ -27,10 +28,18 @@ class APIsTests(TestTemplate):
         self.assertGreater(len(results_list), 0)
 
     def test_generate_request_sig(self):
-        # create dataset and add some records to it
         self._login(self.test_email, self.test_password)
         self._create_and_populate_dataset()
         credential = self._generate_credentials(self.test_user, self.dataset)
         params_dict = {'key': credential.public_key}
         params_dict['sig'] = generate_request_sig(params_dict, credential.private_key)
         self.assertTrue(is_valid_hmac_request(params_dict, credential.private_key))
+
+    def test_is_valid_hmac_request_params_dict_not_modified(self):
+        """
+        Makes sure that the first parameter (dict) of the function is not modefied.
+        """
+        params_dict = {'sig': '1231231234124', 'test1': 'test1', 'test2': 'test2'}
+        params_dict_copy = params_dict.copy()
+        is_valid_hmac_request(params_dict_copy, private_key='test')
+        self.assertEqual(params_dict, params_dict_copy)

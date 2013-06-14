@@ -6,15 +6,17 @@ from operator import itemgetter
 from bson import json_util
 
 
-def is_valid_hmac_request(params, private_key):
+def is_valid_hmac_request(params_dict, private_key):
     """
     Check to see if a request is a valid hmac request
     @params multidict a multidict of params
     @return boolean
     """
+    # make sure to copy the params_dict input, to avoid any side effects
+    params_dict_copy = params_dict.copy()
     # remove the sig
-    sig = params.pop('sig')
-    return (generate_request_sig(params, private_key) == sig)
+    sig = params_dict_copy.pop('sig')
+    return (generate_request_sig(params_dict_copy, private_key) == sig)
 
 
 def generate_request_sig(params_dict, private_key):
