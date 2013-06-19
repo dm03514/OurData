@@ -75,7 +75,7 @@ class APIBaseView(object):
             self.authenticator.is_authenticated(self.request.params, 
                                                 self.credential.private_key)
         except InvalidCredentialsError as e:
-            raise e
+            return self._render_response(http_exception=HTTPUnauthorized)
 
         # call the corresponding request Type
         # get data/response/return value fromt he appropriate method
