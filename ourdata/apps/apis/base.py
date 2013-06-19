@@ -1,4 +1,5 @@
 from pyramid.renderers import render_to_response
+from pyramid.response import Response
 from pyramid.view import view_config
 
 from ourdata.apps.apis.authentication import InvalidCredentialsError 
@@ -99,7 +100,6 @@ class APIBaseView(object):
         Checks that all params in `required_params_list` are present in the request.
         Raises a ParamNotFound error if one is missing.
         """
-        #import ipdb; ipdb.set_trace()
         for expected_param in self.required_params_list:
             if not self.request.params.get(expected_param):
                 raise ParamNotFoundError('Missing %s from request' % (expected_param))
@@ -107,8 +107,16 @@ class APIBaseView(object):
     def _http_method_not_allowed(self, *args, **kwargs):
         return Exception() 
 
-    def _render_response(self, context_dict):
+    def _render_response(self, context_dict, http_exception=None):
         """
         Returns a response with the correct headers/ content type, defaults to JSON.
+        If there is an http_exception present, the response will contain information
+        from that exception.  The exceptions are all the pyramid builtins 
+        pyramid.httpexceptions
+        http://pyramid.readthedocs.org/en/1.0-branch/api/httpexceptions.html#subclass-usage-notes
         """
-        return render_to_response('json', context_dict, self.request)
+        response = render_to_response('json', context_dict, self.request)
+        #import ipdb; ipdb.set_trace()
+        if http_exception is not None:
+            response.status_int = http_exception.code
+        return response

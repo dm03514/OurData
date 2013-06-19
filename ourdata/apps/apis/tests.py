@@ -20,7 +20,7 @@ class APIsTests(TestTemplate):
         credential = self._generate_credentials(self.test_user, self.dataset)
         params_dict = {'key': credential.public_key, 'lessThan': 10}
         params_dict['sig'] = generate_request_sig(params_dict, credential.private_key)
-        response = self.testapp.get('/api/%s/%s/get?%s' % 
+        response = self.testapp.get('/api/%s/%s?%s' % 
             (self.dataset_title, 'int_column', urlencode(params_dict))
         )
         self.assertTrue(response.json['success'])

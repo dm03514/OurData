@@ -5,7 +5,6 @@ from ourdata.apps.apis.base import APIBaseView, ParamNotFoundError
 from ourdata.apps.apis.models import APICredential
 from ourdata.apps.apis.utils import is_valid_hmac_request, QueryHelper
 from ourdata.apps.datasets.models import DatasetSchema
-from ourdata.apps.users.models import User
 
 
 """
@@ -35,14 +34,17 @@ string should be able to do == and contains
 
 
 class APIFieldRequest(APIBaseView):
-   
-    @view_config(
-        route_name='api_field_get', 
-        request_method='GET',
-        renderer='json'
-    )
-    def api_field_get(self):
 
+    authenticator = HMACAuthenticator()
+
+    @view_config(
+        route_name='api_field_request', 
+    )
+    def api_field_request(self):
+        return super(APIFieldRequest, self).api_request()
+   
+    def get(self):
+        """
         try:    
             self.has_required_params()
         except ParamNotFoundError as e:
@@ -60,6 +62,7 @@ class APIFieldRequest(APIBaseView):
                 'message': 'No Dataset named: %s' % 
                     (self.request.matchdict['dataset_slug'])
             }
+        """
 
         params_dict = self.request.params.copy()
 
@@ -71,10 +74,11 @@ class APIFieldRequest(APIBaseView):
             # check if the param is in params
             value_str = params_dict.get(query_param)
             if value_str:
-                params_dict[query_param] = dataset.convert_field_value(
+                params_dict[query_param] = self.dataset.convert_field_value(
                     self.request.matchdict['field_name'], value_str,
                     from_timestamp=True)
 
+        """
         # get credential associated with this request
         try:
             credential = APICredential.objects.get(
@@ -88,20 +92,18 @@ class APIFieldRequest(APIBaseView):
                 'message': 'Invalid Key',
             }
 
-        # get user associated with this credential
-        user = User.objects.get(id=credential.user_id, is_active=True)
-
         # check signature
         if not is_valid_hmac_request(params_dict, credential.private_key):
             return {
                 'success': False,
                 'message': 'Invalid Signature',
             }
+        """
 
         #import ipdb; ipdb.set_trace()
         # all is good finally time to query!
         query_helper = QueryHelper(
-            collection_name=dataset.title, 
+            collection_name=self.dataset.title, 
             field_name=self.request.matchdict['field_name'],
             params_dict=params_dict
         )
