@@ -89,3 +89,17 @@ class APIsTests(TestTemplate):
         response = self.testapp.get('/api/{}?{}'.format(self.dataset.title, 
                                                         urlencode(params_dict)),
                                                         status=400)
+
+    def test_api_get_invalid_credential_not_found(self):
+        """
+        Tests that HTTPUnauthorized (401) is returned if an api credential is not found
+        for the given key.
+        """
+        self._login(self.test_email, self.test_password)
+        self._create_and_populate_dataset()
+        credential = self._generate_credentials(self.test_user, self.dataset)
+        params_dict = {'key': 'madddddeeeup'}
+        params_dict['sig'] = generate_request_sig(params_dict, credential.private_key)
+        response = self.testapp.get('/api/{}?{}'.format(self.dataset.title, 
+                                                        urlencode(params_dict)),
+                                                        status=401)

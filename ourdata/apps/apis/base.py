@@ -1,6 +1,7 @@
 from pyramid.httpexceptions import (
     HTTPBadRequest,
-    HTTPNotFound
+    HTTPNotFound,
+    HTTPUnauthorized
 )
 from pyramid.renderers import render_to_response
 from pyramid.response import Response
@@ -67,7 +68,7 @@ class APIBaseView(object):
                 is_active=True
             )
         except APICredential.DoesNotExist as e:
-            raise e
+            return self._render_response(http_exception=HTTPUnauthorized)
 
         # authenticate the request
         try:
