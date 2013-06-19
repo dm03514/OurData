@@ -12,7 +12,6 @@ class ParamNotFoundError(Exception):
 class APIBaseView(object):
 
     http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace']
-
     def __init__(self, request):
         """
         Make sure that store request for later use.
@@ -20,18 +19,21 @@ class APIBaseView(object):
         self.request = request
 
     def api_request(self):
-        #import ipdb; ipdb.set_trace()
-        # check required params
+        try:
+            # check required params
+            self.has_required_params()
 
-        # authenticate the request
+            # authenticate the request
 
-        # call the corresponding request Type
+            # call the corresponding request Type
 
-        # get data/response/return value fromt he appropriate method
-        # and make sure to render to user based on Accept header, either
-        # application/json or as html
-        # https://github.com/django/django/blob/master/django/views/generic/base.py
-        data = self._dispatch(self.request)
+            # get data/response/return value fromt he appropriate method
+            # and make sure to render to user based on Accept header, either
+            # application/json or as html
+            # https://github.com/django/django/blob/master/django/views/generic/base.py
+            data = self._dispatch(self.request)
+        except (ParamNotFoundError) as e:
+            raise e
 
         # encode data using the correct content type
         return self._render_response(data)
@@ -43,15 +45,6 @@ class APIBaseView(object):
         """
         raise NotImplementedError() 
 
-    def check_request_params(self, required_params_list):
-        """
-        Make sure that a request is valid.
-        raises a ParamNotFoundError with specifics
-        """
-        for param in required_params_list:
-            if not self.request.GET.get(param):
-                raise ParamNotFoundError('Missing %s from request' % (param))
-
     def _dispatch(self, request, *args, **kwargs):
         # Try to dispatch to the right method; if a method doesn't exist,
         # defer to the error handler. Also defer to the error handler if the
@@ -62,7 +55,16 @@ class APIBaseView(object):
             handler = self._http_method_not_allowed
         return handler(*args, **kwargs)
 
-    #def has_required_params(self, required_params_list):
+    def has_required_params(self):
+        """
+        Checks that all params in `required_params_list` are present in the request.
+        Raises a ParamNotFound error if one is missing.
+        """
+        #import ipdb; ipdb.set_trace()
+        for expected_param in self.required_params_list:
+            if not self.request.params.get(expected_param):
+                raise ParamNotFoundError('Missing %s from request' % (expected_param))
+          
 
     def _http_method_not_allowed(self, *args, **kwargs):
         return Exception() 
@@ -72,3 +74,12 @@ class APIBaseView(object):
         Returns a response with the correct headers/ content type, defaults to JSON.
         """
         return render_to_response('json', context_dict, self.request)
+
+    @property
+    def required_params_list(self):
+        """
+        Contains all params that are necessary for the request to be valid.
+        If it has not been set, fail loudly.
+        """
+        raise NotImplementedError() 
+

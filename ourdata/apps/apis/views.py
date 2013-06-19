@@ -35,7 +35,9 @@ string should be able to do == and contains
 
 
 class APIFieldRequest(APIBaseView):
-    
+   
+    required_params_list = ['sig', 'key'] 
+
     @view_config(
         route_name='api_field_get', 
         request_method='GET',
@@ -44,7 +46,7 @@ class APIFieldRequest(APIBaseView):
     def api_field_get(self):
 
         try:    
-            self.check_request_params(['sig', 'key'])
+            self.has_required_params()
         except ParamNotFoundError as e:
             return {'success': False, 'message': e.message}
 
@@ -112,6 +114,7 @@ class APIFieldRequest(APIBaseView):
 class APIRequest(APIBaseView):
 
     authenticator = HMACAuthenticator()
+    required_params_list = ['sig', 'key']
 
     @view_config(
         route_name='api_request', 

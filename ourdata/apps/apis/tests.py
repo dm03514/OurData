@@ -54,6 +54,13 @@ class APIsTests(TestTemplate):
         params_dict = {'key': credential.public_key}
         params_dict['sig'] = generate_request_sig(params_dict, credential.private_key)
         response = self.testapp.get('/api/{}?{}'.format(self.dataset.title, urlencode(params_dict)))
-        self.assertTrue('results' in response.json)
-        self.assertIsInstance(response.json['results'], list)
+        expected_return_values = (
+            {'key': 'results', 'type': list},
+            {'key': 'count', 'type': int},
+            {'key': 'next', 'type': str},
+            {'key': 'previous', 'type': str}
+        )
+        for expected_values_dict in expected_return_values:
+            self.assertTrue(expected_values_dict['key'] in response.json)
+            self.assertIsInstance(response.json['results'], expected_values_dict['type'])
         #import ipdb; ipdb.set_trace()
