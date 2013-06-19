@@ -77,3 +77,15 @@ class APIsTests(TestTemplate):
         params_dict['sig'] = generate_request_sig(params_dict, credential.private_key)
         response = self.testapp.get('/api/datasetdoesnotexist?{}'.format(urlencode(params_dict)),
             status=404)
+
+    def test_api_get_request_missing_params(self):
+        """
+        Tests that a request returns correct error when params are missing.
+        """
+        self._login(self.test_email, self.test_password)
+        self._create_and_populate_dataset()
+        credential = self._generate_credentials(self.test_user, self.dataset)
+        params_dict = {'key': credential.public_key}
+        response = self.testapp.get('/api/{}?{}'.format(self.dataset.title, 
+                                                        urlencode(params_dict)),
+                                                        status=400)

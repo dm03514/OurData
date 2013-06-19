@@ -1,4 +1,7 @@
-from pyramid.httpexceptions import HTTPNotFound
+from pyramid.httpexceptions import (
+    HTTPBadRequest,
+    HTTPNotFound
+)
 from pyramid.renderers import render_to_response
 from pyramid.response import Response
 from pyramid.view import view_config
@@ -54,7 +57,7 @@ class APIBaseView(object):
         try:
             self.has_required_params()
         except ParamNotFoundError as e:
-            raise e
+            return self._render_response(http_exception=HTTPBadRequest)
 
         # get the credential of the user making the request
         try:
