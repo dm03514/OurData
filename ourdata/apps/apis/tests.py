@@ -64,3 +64,16 @@ class APIsTests(TestTemplate):
             self.assertTrue(expected_values_dict['key'] in response.json)
             self.assertIsInstance(response.json['results'], expected_values_dict['type'])
         #import ipdb; ipdb.set_trace()
+
+    def test_api_get_request_dataset_not_found(self):
+        """
+        Tests that when a url with an incorrect dataset slug is requested a 404 
+        error is raised.
+        """
+        self._login(self.test_email, self.test_password)
+        self._create_and_populate_dataset()
+        credential = self._generate_credentials(self.test_user, self.dataset)
+        params_dict = {'key': credential.public_key}
+        params_dict['sig'] = generate_request_sig(params_dict, credential.private_key)
+        response = self.testapp.get('/api/datasetdoesnotexist?{}'.format(urlencode(params_dict)),
+            status=404)

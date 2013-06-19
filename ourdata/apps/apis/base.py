@@ -1,3 +1,4 @@
+from pyramid.httpexceptions import HTTPNotFound
 from pyramid.renderers import render_to_response
 from pyramid.response import Response
 from pyramid.view import view_config
@@ -5,6 +6,16 @@ from pyramid.view import view_config
 from ourdata.apps.apis.authentication import InvalidCredentialsError 
 from ourdata.apps.apis.models import APICredential
 from ourdata.apps.datasets.models import DatasetSchema
+
+"""
+# authentication
+
+    1) all params should be split up into a dictionary and ordered by key
+    2) append all those params together as a string and 
+        concat the privatekey
+    3) sha1 that string
+    4) attach that as value of 'sig' param to the request
+"""
 
 class ParamNotFoundError(Exception):
     """
@@ -37,7 +48,7 @@ class APIBaseView(object):
                 title=self.request.matchdict['dataset_slug']
             )
         except DatasetSchema.DoesNotExist as e:
-            raise e
+            return self._render_response(http_exception=HTTPNotFound)
 
         # check all required params are present
         try:
@@ -107,7 +118,7 @@ class APIBaseView(object):
     def _http_method_not_allowed(self, *args, **kwargs):
         return Exception() 
 
-    def _render_response(self, context_dict, http_exception=None):
+    def _render_response(self, context_dict={}, http_exception=None):
         """
         Returns a response with the correct headers/ content type, defaults to JSON.
         If there is an http_exception present, the response will contain information
