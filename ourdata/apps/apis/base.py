@@ -1,6 +1,10 @@
 from pyramid.renderers import render_to_response
 from pyramid.view import view_config
 
+from ourdata.apps.apis.authentication import InvalidCredentialsError 
+from ourdata.apps.apis.models import APICredential
+from ourdata.apps.datasets.models import DatasetSchema
+
 class ParamNotFoundError(Exception):
     """
     Raised when a required param is missing from 
@@ -12,6 +16,8 @@ class ParamNotFoundError(Exception):
 class APIBaseView(object):
 
     http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace']
+    required_params_list = ['sig', 'key'] 
+
     def __init__(self, request):
         """
         Make sure that store request for later use.
@@ -19,21 +25,48 @@ class APIBaseView(object):
         self.request = request
 
     def api_request(self):
+        """
+        Validates and authenticates the api request.  Will call the appropriate request
+        method of the child class, ie `get`, `post`, and redner that data appropriatly
+        """
+        # check that this dataset is valid,
+        # dataset is identified by the slug portion of the url
         try:
-            # check required params
-            self.has_required_params()
-
-            # authenticate the request
-
-            # call the corresponding request Type
-
-            # get data/response/return value fromt he appropriate method
-            # and make sure to render to user based on Accept header, either
-            # application/json or as html
-            # https://github.com/django/django/blob/master/django/views/generic/base.py
-            data = self._dispatch(self.request)
-        except (ParamNotFoundError) as e:
+            self.dataset = DatasetSchema.objects.get(
+                title=self.request.matchdict['dataset_slug']
+            )
+        except DatasetSchema.DoesNotExist as e:
             raise e
+
+        # check all required params are present
+        try:
+            self.has_required_params()
+        except ParamNotFoundError as e:
+            raise e
+
+        # get the credential of the user making the request
+        try:
+            self.credential = APICredential.objects.get(
+                public_key=self.request.params['key'],
+                dataset_id=self.dataset.id,
+                is_active=True
+            )
+        except APICredential.DoesNotExist as e:
+            raise e
+
+        # authenticate the request
+        try:
+            self.authenticator.is_authenticated(self.request.params, 
+                                                self.credential.private_key)
+        except InvalidCredentialsError as e:
+            raise e
+
+        # call the corresponding request Type
+        # get data/response/return value fromt he appropriate method
+        # and make sure to render to user based on Accept header, either
+        # application/json or as html
+        # https://github.com/django/django/blob/master/django/views/generic/base.py
+        data = self._dispatch(self.request)
 
         # encode data using the correct content type
         return self._render_response(data)
@@ -55,6 +88,12 @@ class APIBaseView(object):
             handler = self._http_method_not_allowed
         return handler(*args, **kwargs)
 
+    def _get_api_credential(self):
+        """
+        Gets the credential associated with the request.key value or raises
+        APICredential.DoesNotExist error.
+        """
+
     def has_required_params(self):
         """
         Checks that all params in `required_params_list` are present in the request.
@@ -65,7 +104,6 @@ class APIBaseView(object):
             if not self.request.params.get(expected_param):
                 raise ParamNotFoundError('Missing %s from request' % (expected_param))
           
-
     def _http_method_not_allowed(self, *args, **kwargs):
         return Exception() 
 
@@ -74,12 +112,3 @@ class APIBaseView(object):
         Returns a response with the correct headers/ content type, defaults to JSON.
         """
         return render_to_response('json', context_dict, self.request)
-
-    @property
-    def required_params_list(self):
-        """
-        Contains all params that are necessary for the request to be valid.
-        If it has not been set, fail loudly.
-        """
-        raise NotImplementedError() 
-
