@@ -104,12 +104,6 @@ class APIBaseView(object):
             handler = self._http_method_not_allowed
         return handler(*args, **kwargs)
 
-    def _get_api_credential(self):
-        """
-        Gets the credential associated with the request.key value or raises
-        APICredential.DoesNotExist error.
-        """
-
     def has_required_params(self):
         """
         Checks that all params in `required_params_list` are present in the request.
