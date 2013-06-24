@@ -33,26 +33,6 @@ class APIFieldRequest(APIBaseView):
         return super(APIFieldRequest, self).api_request()
    
     def get(self):
-        """
-        try:    
-            self.has_required_params()
-        except ParamNotFoundError as e:
-            return {'success': False, 'message': e.message}
-
-        # get the dataset for this title check that it contains
-        try:
-            dataset = DatasetSchema.objects.get(
-                title=self.request.matchdict['dataset_slug'],
-                fields__name=self.request.matchdict['field_name']
-            )
-        except DatasetSchema.DoesNotExist:
-            return {
-                'success': False,
-                'message': 'No Dataset named: %s' % 
-                    (self.request.matchdict['dataset_slug'])
-            }
-        """
-
         params_dict = self.request.params.copy()
 
         # all url values should be converted to the correct datatype
@@ -67,27 +47,6 @@ class APIFieldRequest(APIBaseView):
                     self.request.matchdict['field_name'], value_str,
                     from_timestamp=True)
 
-        """
-        # get credential associated with this request
-        try:
-            credential = APICredential.objects.get(
-                public_key=self.request.GET['key'],
-                dataset_id=dataset.id,
-                is_active=True
-            )
-        except APICredential.DoesNotExist:
-            return {
-                'success': False,
-                'message': 'Invalid Key',
-            }
-
-        # check signature
-        if not is_valid_hmac_request(params_dict, credential.private_key):
-            return {
-                'success': False,
-                'message': 'Invalid Signature',
-            }
-        """
 
         #import ipdb; ipdb.set_trace()
         # all is good finally time to query!
