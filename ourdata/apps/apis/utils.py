@@ -59,21 +59,22 @@ class QueryHelper():
     different dataschemas.
     """
 
-    def __init__(self, collection_name, field_name, params_dict):
+    def __init__(self, collection_name, params_dict, field_name=None):
 
         self.limit = 100
+        self.sort_list = [('$natural', 1)]
 
         # get this collection
         db = connection.get_db()
         self.collection = db[collection_name]
 
-        self.query_dict = self.build_query(field_name, params_dict)
+        self.query_dict = self._build_query(params_dict, field_name)
 
 
-    def build_query(self, field_name, params_dict):
+    def _build_query(self, params_dict, field_name=None):
         """
         Populate query dict according to the request params.
-        @param params_dict multidict of GET params for this query
+        @param params_dict multidict of params for this query
         @return dict a mongo query ready to be executed by find
         """
         # add offset to `skip`
@@ -98,9 +99,11 @@ class QueryHelper():
         Return a list of results serialized according to the
         given type'
         """
-        # exclude id for right now? {'_id': 0}
+        # skip is implemented in find as kwarg
         results = self.collection.find(self.query_dict,
-            limit=self.limit)
+                                       limit=self.limit,
+                                       sort=self.sort_list)
+
         return json.dumps([x for x in results], default=json_util.default)
 
 

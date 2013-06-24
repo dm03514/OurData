@@ -48,12 +48,11 @@ class APIFieldRequest(APIBaseView):
                     from_timestamp=True)
 
 
-        #import ipdb; ipdb.set_trace()
         # all is good finally time to query!
         query_helper = QueryHelper(
             collection_name=self.dataset.title, 
-            field_name=self.request.matchdict['field_name'],
-            params_dict=params_dict
+            params_dict=params_dict,
+            field_name=self.request.matchdict['field_name']
         )
         results = query_helper.get_results()
         return {'success': True, 'results': results}
@@ -70,4 +69,5 @@ class APIRequest(APIBaseView):
         return super(APIRequest, self).api_request()
 
     def get(self):
+        #import ipdb; ipdb.set_trace()
         return {}
