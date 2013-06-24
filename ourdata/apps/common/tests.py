@@ -40,7 +40,7 @@ class TestTemplate(unittest.TestCase):
 
         response = self.testapp.post(url, post_params_dict, status=301)
         collection = self.db[self.dataset_title]
-        for i in range(20):
+        for i in range(120):
                 collection.insert({'int_column': i})
         return self.dataset
 

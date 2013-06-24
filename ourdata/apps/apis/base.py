@@ -39,6 +39,7 @@ class APIBaseView(object):
         Make sure that store request for later use.
         """
         self.request = request
+        self.params_dict = self.request.params.copy()
 
     def api_request(self):
         """

@@ -58,7 +58,6 @@ class QueryHelper():
     Help abstract out the problem of querying over vastly
     different dataschemas.
     """
-
     def __init__(self, collection_name, params_dict, field_name=None):
 
         self.limit = 100
@@ -68,10 +67,14 @@ class QueryHelper():
         db = connection.get_db()
         self.collection = db[collection_name]
 
-        self.query_dict = self._build_query(params_dict, field_name)
+        # querying on a field is a different process then not querying on
+        # a field, split it up here
+        if field_name is not None:
+            self.query_dict = self._build_field_query(params_dict, field_name)
+        else:
+            self.query_dict = self._build_query(params_dict)
 
-
-    def _build_query(self, params_dict, field_name=None):
+    def _build_field_query(self, params_dict, field_name):
         """
         Populate query dict according to the request params.
         @param params_dict multidict of params for this query
@@ -93,8 +96,15 @@ class QueryHelper():
                 query_dict[field_name] = {'$gte': params_dict['lessThan']}
         return query_dict
 
+    def _build_query(self, params_dict):
+        """
+        @param params_dict multidict of params for this query
+        @return dict a mongo query ready to be executed by find
+        """
+        query_dict = {}
+        return query_dict
 
-    def get_results(self, serialized_as='json'):
+    def get_results(self):
         """
         Return a list of results serialized according to the
         given type'
@@ -103,8 +113,12 @@ class QueryHelper():
         results = self.collection.find(self.query_dict,
                                        limit=self.limit,
                                        sort=self.sort_list)
-
-        return json.dumps([x for x in results], default=json_util.default)
+        #import ipdb; ipdb.set_trace()
+        results_list = []
+        for result in results:
+            result['_id'] = str(result['_id'])
+            results_list.append(result)
+        return results_list
 
 
     def _has_range(self, params_dict):

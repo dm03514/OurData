@@ -33,17 +33,15 @@ class APIFieldRequest(APIBaseView):
         return super(APIFieldRequest, self).api_request()
    
     def get(self):
-        params_dict = self.request.params.copy()
 
         # all url values should be converted to the correct datatype
-
         query_params_list = ['lessThan', 'lessThanEqualTo',
             'greaterThan', 'greaterThanEqualTo', 'equalTo']
         for query_param in query_params_list:
             # check if the param is in params
-            value_str = params_dict.get(query_param)
+            value_str = self.params_dict.get(query_param)
             if value_str:
-                params_dict[query_param] = self.dataset.convert_field_value(
+                self.params_dict[query_param] = self.dataset.convert_field_value(
                     self.request.matchdict['field_name'], value_str,
                     from_timestamp=True)
 
@@ -51,7 +49,7 @@ class APIFieldRequest(APIBaseView):
         # all is good finally time to query!
         query_helper = QueryHelper(
             collection_name=self.dataset.title, 
-            params_dict=params_dict,
+            params_dict=self.params_dict,
             field_name=self.request.matchdict['field_name']
         )
         results = query_helper.get_results()
@@ -69,5 +67,8 @@ class APIRequest(APIBaseView):
         return super(APIRequest, self).api_request()
 
     def get(self):
+        query_helper = QueryHelper(collection_name=self.dataset.title, 
+                                   params_dict=self.params_dict)
+        results = query_helper.get_results()
         #import ipdb; ipdb.set_trace()
         return {}

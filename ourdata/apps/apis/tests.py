@@ -23,9 +23,9 @@ class APIsTests(TestTemplate):
         response = self.testapp.get('/api/%s/%s?%s' % 
             (self.dataset_title, 'int_column', urlencode(params_dict))
         )
+        #import ipdb; ipdb.set_trace()
         self.assertTrue(response.json['success'])
-        results_list = json.loads(response.json['results'])
-        self.assertGreater(len(results_list), 0)
+        self.assertGreater(len(response.json['results']), 0)
 
     def test_generate_request_sig(self):
         self._login(self.test_email, self.test_password)
